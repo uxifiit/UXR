@@ -1,0 +1,3 @@
+﻿<connectionStrings>
+  <add name="UXRDbContext" connectionString="Data Source=localhost;Initial Catalog=UXR;Integrated Security=True" providerName="System.Data.SqlClient" />
+</connectionStrings>

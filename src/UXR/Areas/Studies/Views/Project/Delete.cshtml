@@ -1,0 +1,62 @@
+﻿@model UXR.Studies.ViewModels.Projects.ProjectViewModel
+
+@{
+    ViewBag.Title = "Delete project - " + Model.Name; ;
+}
+
+<h2>Delete project</h2>
+
+<h3>Are you sure you want to delete this project?</h3>
+All the recorded data assigned to this project will be deleted as well.
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CreatedAt)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CreatedAt)
+        </dd>
+
+@if (Context.User.IsInRole(UXR.Models.UserRoles.ADMIN))
+{
+        <dt>
+            @Html.DisplayNameFor(model => model.Owner)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Owner.UserName)
+        </dd>
+}
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+
+    </dl>
+</div>
+
+<div>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-actions no-color">
+        <input type="submit" value="Delete" class="btn btn-default" /> |
+        @Html.ActionLink("Back to list", nameof(ProjectController.Index))
+    </div>
+}
+</div>

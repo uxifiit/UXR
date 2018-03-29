@@ -1,0 +1,129 @@
+﻿@model UXR.Studies.ViewModels.Sessions.CreateSessionViewModel
+
+@section styles {
+    <link href="~/Content/codemirror.css" rel="stylesheet" type="text/css" />
+}
+
+@{
+    ViewBag.Title = "Create session";
+}
+
+<h2>@ViewBag.Title</h2>
+
+
+@using (Html.BeginForm()) 
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", placeholder = "Insert session name" } })
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.StartTime, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class='input-group date' id='datetimepicker'>
+                    @Html.EditorFor(model => model.StartTime, new { htmlAttributes = new { @class = "form-control", placeholder = "DD/MM/YYYY hh:mm" } })
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+                @Html.ValidationMessageFor(model => model.StartTime, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Length, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class='input-group date' id='timepicker'>
+                    @Html.EditorFor(model => model.Length, new { htmlAttributes = new { @class = "form-control", placeholder = "HH:mm", type = "text" } })
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-time"></span>
+                    </span>
+                </div>
+                @Html.ValidationMessageFor(model => model.StartTime, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Definition, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.HiddenFor(model => model.UseProjectDefinitionTemplate)
+                <div id="use-project-template-form">
+                    Use project definition template<br />
+                    <input type="button" value="Edit definition" class="edit-template-button btn btn-default" />
+                </div>
+                <div id="edit-template-form" style="display: none">
+                    @Html.EditorFor(model => model.Definition, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Definition, "", new { @class = "text-danger" }) <br />
+                    <input type="button" value="Use project definition template" class="edit-template-button btn btn-default" />
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to project", nameof(ProjectController.Details), ProjectController.ControllerName, new { projectId = Model.ProjectId }, null)
+</div>
+
+@section scripts {
+<script src="~/Scripts/codemirror.js" type="text/javascript"></script>
+<script src="~/Scripts/myjquery.js" type="text/javascript"></script>
+<script type="text/javascript">
+    $(document).ready(function ()
+    {
+        $("#datetimepicker").datetimepicker({
+            format: "DD/MM/YYYY HH:mm",
+            sideBySide: true
+        });
+
+        $("#timepicker").datetimepicker({
+            format: "HH:mm",
+            stepping: 15
+        });
+
+        var isEditorLoaded = false;
+
+        function showOrHideEditor($checkbox) {
+            var value = $checkbox.val();
+            if (value && value.toLowerCase() === "true") {
+                $("#edit-template-form").hide();
+                $("#use-project-template-form").show();
+            }
+            else {
+                $("#edit-template-form").show();
+                $("#use-project-template-form").hide();
+
+                if (isEditorLoaded === false) {
+                    loadDefinitionEditor("@Html.IdFor(model => Model.Definition)");
+                    isEditorLoaded = true;
+                }
+            }
+        }
+
+        var $checkbox = $("#@Html.IdFor(model => Model.UseProjectDefinitionTemplate)");
+        showOrHideEditor($checkbox);
+
+        $(".edit-template-button").click(function () {
+            var value = $checkbox.val();
+            $checkbox.val(value && value.toLowerCase() === "true" ? "False" : "True");
+            showOrHideEditor($checkbox);
+        });
+    });
+</script>
+}

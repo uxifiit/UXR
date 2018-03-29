@@ -1,0 +1,145 @@
+﻿@model UXR.Studies.ViewModels.Sessions.SessionDetailsViewModel
+
+@{
+    ViewBag.Title = Model.Name;
+}
+
+<h2>Session: @Model.Name</h2>
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.ProjectName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ProjectName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.StartTime)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.StartTime)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Length)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Length)
+        </dd>
+
+    </dl>
+</div>
+
+<h3>Session recordings</h3>
+
+@* TODO download individual recordings *@
+@*@using (Html.BeginForm("PrepareRecordingsDownload", SessionController.ControllerName, FormMethod.Post, new { session = Model.SelectableRecordings }))
+{*@
+
+@if (Model.Recordings.Any())
+{
+
+    <div class="form-group row">
+        <div class="col-md-10">
+            <table class="table">
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Recordings.FirstOrDefault().NodeName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Recordings.FirstOrDefault().StartTime)
+                    </th>
+                   
+                </tr>
+
+                @foreach (var recording in Model.Recordings)
+                {
+
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(model => recording.NodeName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => recording.StartTime)
+                        </td>
+                    </tr>
+                }
+
+                                @*
+             <!-- Commented out sections are for exporting the data -->
+            <!--
+            <th>
+                <input type="checkbox" id="CheckAll" checked/> Select all
+            </th>
+            -->
+        @for (int i = 0; i < Model.SelectableRecordings.Recordings.Count; i++)
+        {
+            @Html.HiddenFor(model => Model.SelectableRecordings.Recordings[i].ProjectName)
+            @Html.HiddenFor(model => Model.SelectableRecordings.Recordings[i].SessionName)
+            <tr>
+                <td>
+                    @Html.DisplayFor(model => Model.SelectableRecordings.Recordings[i].NodeName)
+                    @Html.HiddenFor(model => Model.SelectableRecordings.Recordings[i].NodeName)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => Model.SelectableRecordings.Recordings[i].StartTime)
+                    @Html.HiddenFor(model => Model.SelectableRecordings.Recordings[i].StartTime)
+                </td>
+                <!--
+                <td>
+                    @Html.CheckBoxFor(model => Model.SelectableRecordings.Selections[i], new { @id = "RecordingSelection", @class = "recordingSelection" })
+                </td>
+                -->
+            </tr>
+        }
+                                *@
+            </table>
+        </div>
+    </div>
+}
+else
+{
+    <p>There are no recordings for this session.</p>
+}
+    <!--
+    <div class="form-horizontal">
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" id="ExportButton" value="Start export" class="btn btn-default" />
+            </div>
+        </div>
+    </div> 
+    -->
+
+<div>
+    @Html.ActionLink("Back to project", nameof(ProjectController.Details), ProjectController.ControllerName, new { projectId = Model.ProjectId }, null)
+</div>
+
+@section scripts {
+    @*<script type="text/javascript">
+        $(document).ready(function () {
+            //$("#CheckAll").click(function () {
+            //    $(".recordingSelection").prop('checked', $(this).prop('checked'));
+            //    $("#ExportButton").prop('disabled', !$(this).prop('checked'));
+            //});
+
+            //$(".recordingSelection").change(function () {
+            //    if (!$(this).prop("checked")) {
+            //        $("#CheckAll").prop("checked", false);
+            //    }
+
+            //    $("#ExportButton").attr("disabled", "true");
+            //    $(".recordingSelection:checked").each(function () {
+            //        $("#ExportButton").removeAttr("disabled");
+            //    });
+            //});
+        });
+    </script>*@
+}

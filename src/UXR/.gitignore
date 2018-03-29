@@ -1,0 +1,10 @@
+js
+css
+fonts
+bower_components
+node_modules
+connectionStrings.config
+deployment.config
+App_Data/pkgs
+App_Data/uploads
+App_Data/logs

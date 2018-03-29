@@ -1,0 +1,45 @@
+﻿@model IEnumerable<PLUS.PackageStore.ViewModels.Groups.GroupViewModel>
+
+@{
+    ViewBag.Title = "Groups";
+}
+
+<h2>Groups</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.NodesCount)
+        </th>
+        @*<th>
+            @Html.DisplayNameFor(model => model.PackageVersion)
+        </th>*@
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.NodesCount)
+        </td>
+        @*<td>
+            @Html.DisplayFor(modelItem => item.PackageVersion)
+        </td>*@
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { groupId = item.Id }) |
+            @Html.ActionLink("Nodes", "Index", "Node", new { groupId = item.Id }, new { }) |
+            @Html.ActionLink("Delete", "Delete", new { groupId = item.Id })
+        </td>
+    </tr>
+}
+
+</table>

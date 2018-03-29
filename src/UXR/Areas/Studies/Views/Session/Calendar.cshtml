@@ -1,0 +1,43 @@
+﻿@model UXR.Studies.ViewModels.Sessions.CalendarViewModel
+
+<h2>Sessions planned today (@DateTime.Now.ToString("dd/M/yyyy"))</h2>
+
+@if (Model.Sessions.Count > 0)
+{
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Sessions.FirstOrDefault().ProjectName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Sessions.FirstOrDefault().StartTime)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Sessions.FirstOrDefault().EndTime)
+        </th>
+    </tr>
+
+    @foreach (var session in Model.Sessions)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(model => session.ProjectName)
+                <br />
+                @Html.DisplayFor(model => session.ProjectOwner.UserName)
+            </td>
+            <td>
+                @Html.DisplayFor(model => session.StartTime)
+            </td>
+            <td>
+                @Html.DisplayFor(model => session.EndTime)
+            </td>
+        </tr>
+    }
+
+</table>
+}
+else
+{
+<p>No sessions planned.</p>
+}
+

@@ -1,0 +1,44 @@
+﻿@model UXR.Studies.ViewModels.Dashboard.DashboardViewModel
+
+@using UXR.Studies.Controllers
+
+@{
+    ViewBag.Title = "Dashboard";
+}
+
+<style>
+.nodeStatus {
+    text-align: center; 
+    display: inline-block; 
+    background: lightgray; 
+    border-radius: 5px; 
+    padding: 12px;  
+    margin: 12px;
+}
+.nodeStatus.activeNodeStatus  {
+    background: lightgreen; 
+}
+.nodeStatus.recordingActiveNodeStatus  {
+    background: lightpink; 
+}
+</style>
+
+<h2>Dashboard</h2>
+<div class="row">
+    <div id="nodeStatusDashboard" class="col-md-12">
+        @{Html.RenderPartial(nameof(DashboardController.NodeStatusBoard), Model);}
+    </div>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+        function updateDashboard() {
+            $("#nodeStatusDashboard").load('@(Url.Action(nameof(DashboardController.NodeStatusBoard), DashboardController.ControllerName, null))');
+            setTimeout(updateDashboard, 5000);
+        }
+
+        $(document).ready(function () {
+            setTimeout(updateDashboard, 5000);
+        });
+    </script>
+}

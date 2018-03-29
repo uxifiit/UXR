@@ -1,0 +1,48 @@
+﻿@model UXR.Studies.ViewModels.GroupNodes.GroupNodesViewModel
+@using PagedList.Mvc;
+
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@{
+    ViewBag.Title = "Nodes";
+}
+
+<h2>@Model.Name nodes</h2>
+
+<p>
+    @Html.ActionLink("Create New", nameof(GroupNodeController.Create))
+</p>
+<table class="table">
+    <tr>
+        <th>
+            Name
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model.Nodes) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+        <td>
+            @using (Html.BeginForm(nameof(GroupNodeController.Delete), GroupNodeController.ControllerName, new { groupId = Model.Id, nodeId = item.Id }))
+            {
+                @Html.AntiForgeryToken()
+                <p>
+                    <input type="submit" value="Delete" class="btn btn-danger btn-sm"/>
+                </p>
+            }
+        </td>
+    </tr>
+}
+
+</table>
+
+<br />
+Page @(Model.Nodes.PageCount < Model.Nodes.PageNumber ? 0 : Model.Nodes.PageNumber) of @Model.Nodes.PageCount
+
+@if (Model.Nodes.Any())
+{
+    Html.PagedListPager(Model.Nodes, page => Url.Action(nameof(GroupNodeController.Index), new { page = page })); @*, sortOrder = ViewBag.CurrentSort}));*@
+}

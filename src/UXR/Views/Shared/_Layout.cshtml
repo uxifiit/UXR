@@ -1,0 +1,66 @@
+﻿@using System.Web.Mvc.Html
+@using UXR.Studies.Controllers;
+@using UXR.Controllers;
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    @Html.HtmlCssCached("mainCss")
+    @RenderSection("styles", required: false)
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("UXR", nameof(HomeController.Index), HomeController.ControllerName, new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    @if (Context.User.Identity.IsAuthenticated)
+                    {
+                        if (Context.User.IsInRole(UXR.Models.UserRoles.APPROVED))
+                        {
+                            <li>@Html.ActionLink("Projects", nameof(ProjectController.Index), ProjectController.ControllerName, new { area = "Studies" }, new { })</li>
+                            <li>@Html.ActionLink("Dashboard", nameof(DashboardController.Index), DashboardController.ControllerName, new { area = "Studies" }, new { })</li>
+                        }
+                        if (Context.User.IsInRole(UXR.Models.UserRoles.ADMIN))
+                        {
+                            <li>@Html.ActionLink("Templates", nameof(SessionTemplateController.Index), SessionTemplateController.ControllerName, new { area = "Studies" }, new { })</li>
+                            <li>@Html.ActionLink("Users", nameof(UserController.Index), UserController.ControllerName, new { area = "" }, new { })</li>
+                        }
+                        if (Context.User.IsInRole(UXR.Models.UserRoles.SUPERADMIN))
+                        {
+                            <li>@Html.ActionLink("Nodes", nameof(GroupController.Index), GroupController.ControllerName, new { area = "Studies" }, new { })</li>
+                            <li><a href="/elmah.axd">Log</a></li>
+                        }
+                    }
+                    <li>@*@Html.ActionLink("Contact", "Contact", "Home")*@</li>
+                </ul>
+                @Html.Partial("_LoginPartial")
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - UXR</p>
+        </footer>
+    </div>
+
+
+    <!-- We can choose to deliver a standard library directly from the application or via CDN -->
+    @*@Html.HtmlScriptsCached("standardLibsJs")*@
+    @Html.HtmlScriptsCached("standardLibsJs")
+    @Html.HtmlScriptsCached("appLibsJs")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

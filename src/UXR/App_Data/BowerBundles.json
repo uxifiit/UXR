@@ -1,0 +1,39 @@
+﻿{
+  "mainCss": [
+    "bower_components/bootstrap/dist/css/bootstrap.css",
+    "Content/site.css",
+    "bower_components/jquery-bonsai/jquery.bonsai.css",
+    "bower_components/jquery-bonsai/assets/svg-icons.css",
+    "bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css"
+  ],
+  "standardLibsJs": [
+    "bower_components/jquery/dist/jquery.js",
+    "bower_components/bootstrap/dist/js/bootstrap.js",
+    "bower_components/jquery-qubit/jquery.qubit.js",
+    "bower_components/jquery-bonsai/jquery.bonsai.js",
+    "bower_components/moment/min/moment.min.js",
+    "bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"
+  ],
+  "standardLibsCdnJs": [
+    {
+      "development": "bower_components/jquery/dist/jquery.js",
+      "production": "jquery.min.js",
+      "cdnUrl": "https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.1.1.min.js",
+      "cdnSuccessTest": "window.jQuery"
+    },
+    {
+      "development": "bower_components/bootstrap/dist/js/bootstrap.js",
+      "production": "bootstrap.min.js",
+      "cdnUrl": "https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.6/bootstrap.min.js",
+      "cdnSuccessTest": "window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
+    }
+  ],
+  "appLibsJs": [
+    "Scripts/*.js"
+  ],
+  "jqueryval": [
+    "bower_components/jquery.validation/dist/jquery.validate.js",
+    "bower_components/Microsoft.jQuery.Unobtrusive.Validation/jquery.validate.unobtrusive.js"
+  ]
+
+}

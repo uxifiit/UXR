@@ -1,0 +1,46 @@
+﻿@model IEnumerable<PLUS.PackageStore.ViewModels.Apps.AppViewModel>
+
+@{
+    ViewBag.Title = "Apps";
+}
+
+<h2>Apps</h2>
+
+<p>
+    @Html.ActionLink("Create new app", "Create")
+    @Html.ActionLink("Upload new package", "Upload", "Package", new { }, new { })
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PackagesCount)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.NodesCount)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.PackagesCount)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.NodesCount)
+        </td>
+        <td>
+            @*@Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |*@
+            @Html.ActionLink("Packages", "Index", "AppPackage", new { appName = item.Name }, new { }) |
+            @Html.ActionLink("Delete", "Delete", new { appName = item.Name })
+        </td>
+    </tr>
+}
+
+</table>

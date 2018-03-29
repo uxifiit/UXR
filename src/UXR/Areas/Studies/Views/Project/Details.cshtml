@@ -1,0 +1,108 @@
+﻿@model UXR.Studies.ViewModels.Projects.ProjectDetailsViewModel
+
+@{
+    ViewBag.Title = "Project: " + Model.Name;
+}
+
+<h2>Project: @Model.Name</h2>
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CreatedAt)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CreatedAt)
+        </dd>
+
+@if (Context.User.IsInRole(UXR.Models.UserRoles.ADMIN))
+{
+        <dt>
+            @Html.DisplayNameFor(model => model.Owner)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Owner)
+        </dd>
+}
+    </dl>
+</div>
+
+<div class="row">
+    <div class="col-md-10">
+        @Html.ActionLink("Edit project", nameof(ProjectController.Edit), new { projectId = Model.Id })
+    </div>
+</div>
+
+<h3>Sessions</h3>
+
+<p>
+    @Html.ActionLink("Create new session", nameof(SessionController.Create), SessionController.ControllerName, new { projectId = Model.Id }, null)
+</p>
+
+<div class="col-md-10">
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Sessions.FirstOrDefault().Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Sessions.FirstOrDefault().StartTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Sessions.FirstOrDefault().Length)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Sessions.FirstOrDefault().RecordingsCount)
+            </th>
+            <th></th>
+        </tr>
+        @foreach (var session in Model.Sessions)
+        {
+            <tr>
+                <td>
+                    @Html.ActionLink(session.Name, nameof(SessionController.Details), SessionController.ControllerName, new { sessionId = session.Id }, null)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => session.StartTime)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => session.Length)
+                </td>
+                <td>
+                    @if (session.RecordingsCount > 0)
+                    {
+                        @Html.ActionLink("Download", nameof(SessionController.Download), SessionController.ControllerName, new { sessionId = session.Id }, new { @class = $"btn btn-primary btn-sm" })
+                    }
+                    else
+                    {
+                        <p>None</p>
+                    }
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", nameof(SessionController.Edit), SessionController.ControllerName, new { sessionId = session.Id }, null) |
+                    @Html.ActionLink("Delete", nameof(SessionController.Delete), SessionController.ControllerName, new { sessionId = session.Id }, null)
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+
+
+
+
+<div class="row">
+    <div class="col-md-10">
+        @Html.ActionLink("Back to list", nameof(ProjectController.Index))
+    </div>
+</div>

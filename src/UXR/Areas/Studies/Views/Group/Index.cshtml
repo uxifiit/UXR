@@ -1,0 +1,39 @@
+﻿@model IEnumerable<UXR.Studies.ViewModels.Groups.GroupViewModel>
+
+@{
+    ViewBag.Title = "Groups";
+}
+
+<h2>Groups</h2>
+
+<p>
+    @Html.ActionLink("Create New", nameof(GroupController.Create))
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.NodesCount)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.ActionLink(item.Name, nameof(GroupNodeController.Index), GroupNodeController.ControllerName, new { groupId = item.Id }, new { })
+
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.NodesCount)
+        </td>
+        <td>
+            @Html.ActionLink("Rename", nameof(GroupController.Edit), new { groupId = item.Id }) |
+            @Html.ActionLink("Delete", nameof(GroupController.Delete), new { groupId = item.Id })
+        </td>
+    </tr>
+}
+
+</table>

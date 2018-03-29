@@ -1,0 +1,71 @@
+﻿@model IEnumerable<UXR.Studies.ViewModels.Projects.ProjectViewModel>
+@using UXR.Studies.Controllers;
+@using PagedList.Mvc;
+
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@{
+    ViewBag.Title = "Projects";
+}
+
+<h2>Projects</h2>
+
+<p>
+    @Html.ActionLink("Create new project", nameof(ProjectController.Create)) |
+    @Html.ActionLink("Unassigned recordings", nameof(RecordingController.AssignSession), RecordingController.ControllerName)
+</p>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Description)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CreatedAt)
+        </th>
+        @if (Context.User.IsInRole(UXR.Models.UserRoles.ADMIN))
+        {
+            <th>
+                @Html.DisplayNameFor(model => model.Owner)
+            </th>
+        }
+
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.ActionLink(item.Name, nameof(ProjectController.Details), new { projectId = item.Id })
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedAt)
+            </td>
+            @if (Context.User.IsInRole(UXR.Models.UserRoles.ADMIN))
+            {
+                <th>
+                    @Html.DisplayFor(modelItem => item.Owner.UserName)
+                </th>
+            }
+            <td>
+                @Html.ActionLink("Delete", nameof(ProjectController.Delete), new { projectId = item.Id })
+            </td>
+        </tr>
+    }
+
+</table>
+
+<br />
+Page @(((PagedList.IPagedList)Model).PageCount < ((PagedList.IPagedList)Model).PageNumber ? 0 : ((PagedList.IPagedList)Model).PageNumber) of @(((PagedList.IPagedList)Model).PageCount)
+
+@if (Model.Any())
+{
+    @Html.PagedListPager(((PagedList.IPagedList)Model), page => Url.Action(nameof(ProjectController.Index), new { page = page }));
+}

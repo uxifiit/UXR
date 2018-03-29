@@ -1,0 +1,127 @@
+﻿@model UXR.Studies.ViewModels.Recordings.SessionAssigningViewModel
+
+@{
+    ViewBag.Title = "Assign recordings to a session";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <h3>Select session:</h3>
+
+    <div class="form-horizontal">
+        <div class="form-group">
+            @Html.LabelFor(model => model.ProjectId, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList(nameof(Model.ProjectId), Model.ProjectSelectList, "Select project", htmlAttributes: new { @id = "ProjectSelect", @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.ProjectId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.SessionId, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList(nameof(Model.SessionId), new List<SelectListItem>(), "Select session", htmlAttributes: new { @id = "SessionSelect", @class = "form-control", @disabled = "true" })
+                @Html.ValidationMessageFor(model => model.SessionId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    </div>
+
+    <h3>Select recordings:</h3>
+
+    <div class="form-group">
+        <div class="col-md-10">
+            <table class="table">
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Recordings.FirstOrDefault().NodeName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Recordings.FirstOrDefault().StartTime)
+                    </th>
+                    <th>
+                        <input type="checkbox" id="CheckAll" checked /> Select all
+                    </th>
+                    <th></th>
+                </tr>
+
+                @for (int i = 0; i < Model.Recordings.Count; i++)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(model => Model.Recordings[i].NodeName)
+                            @Html.HiddenFor(model => Model.Recordings[i].NodeName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => Model.Recordings[i].StartTime)
+                            @Html.HiddenFor(model => Model.Recordings[i].StartTime)
+                        </td>
+                        <td>
+                            @Html.CheckBoxFor(model => Model.RecordingSelections[i], new { @id = "RecordingSelection", @class = "recordingSelection" })
+                        </td>
+                    </tr>
+                }
+            </table>
+        </div>
+    </div>
+
+    <div class="form-horizontal">
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" id="AssignButton" value="Assign to session" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $.fn.ifAnySelectedEnable = function () {
+            var disabled = this
+            $(disabled).attr("disabled", "true");
+            $(".recordingSelection:checked").each(function () {
+                $(disabled).removeAttr("disabled");
+            });
+        };
+
+        $("#AssignButton").ifAnySelectedEnable();
+
+        $(document).ready(function () {
+            $("#CheckAll").click(function () {
+                $(".recordingSelection").prop('checked', $(this).prop('checked'));
+                $("#AssignButton").ifAnySelectedEnable();
+            });
+
+            $(".recordingSelection").change(function () {
+                if (!$(this).prop("checked")) {
+                    $("#CheckAll").prop("checked", false);
+                }
+
+                $("#AssignButton").ifAnySelectedEnable();
+            });
+
+            $("#ProjectSelect").change(function () {
+                $("#SessionSelect").html("<option value=\'\'>Select session</option>");
+
+                if (!$(this).val() == "0") {
+                    $("#SessionSelect").prop("disabled", false);
+
+                    var projectIndex = $("#ProjectSelect option:selected").index();
+
+                    var sessionSelectLists = @Html.Raw(Json.Encode(Model.SessionSelectLists))
+
+                    $.each(sessionSelectLists[projectIndex-1], function (i, session) {
+                        $("#SessionSelect").append(
+                            $('<option></option>').val(session.Value).html(session.Text));
+                    });
+                } else {
+                    $("#SessionSelect").prop("disabled", true);
+                }
+            });
+        });
+    </script>
+}

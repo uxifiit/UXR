@@ -1,0 +1,68 @@
+﻿@model UXR.ViewModels.ManageUsersListViewModel
+
+@{
+    ViewBag.Title = "Manage users";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            <div class="col-md-10">
+                <table class="table">
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Users.FirstOrDefault().Username)
+                        </th>
+                        @if (User.IsInRole(UXR.Models.UserRoles.SUPERADMIN))
+                        {
+                            <th>
+                                @Html.DisplayNameFor(model => model.Users.FirstOrDefault().IsAdmin)
+                            </th>
+                        }
+                        <th>
+                            @Html.DisplayNameFor(model => model.Users.FirstOrDefault().Approved)
+                        </th>
+                    </tr>
+
+                    @for (int i = 0; i < Model.Users.Count; i++)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(model => Model.Users[i].Username)
+                                @Html.HiddenFor(model => Model.Users[i].Username)
+                                @Html.HiddenFor(model => Model.Users[i].Id)
+                            </td>
+                            @if (User.IsInRole(UXR.Models.UserRoles.SUPERADMIN))
+                            {
+                                <td>
+                                    @Html.CheckBoxFor(model => Model.Users[i].IsAdmin)
+                                </td>
+                            }
+                            <td>
+                                @if (!Model.Users[i].Approved)
+                                {
+                                    @Html.CheckBoxFor(model => Model.Users[i].Approved)
+                                }
+                            </td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <div class="col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}

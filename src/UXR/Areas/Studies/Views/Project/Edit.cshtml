@@ -1,0 +1,83 @@
+﻿@model UXR.Studies.ViewModels.Projects.EditProjectViewModel
+
+@section styles {
+    <link href="~/Content/codemirror.css" rel="stylesheet" type="text/css" />
+}
+
+@{
+    ViewBag.Title = "Edit Project - " + Model.OriginalName;
+}
+
+<h2>Project: @Model.OriginalName</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Id)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+    @if (Context.User.IsInRole(UXR.Models.UserRoles.ADMIN))
+    {
+        <div class="form-group">
+            <label class="control-label col-md-2">
+                @Html.DisplayNameFor(model => model.Owner)
+            </label>
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.Owner.UserName)
+            </div>
+        </div>
+    }
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+            </div>
+        </div>
+       
+        <div class="form-group">
+            @Html.LabelFor(model => model.SessionDefinitionTemplate, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.SessionDefinitionTemplate, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.SessionDefinitionTemplate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+
+<div class="row">
+    <div class="col-md-10">
+        @Html.ActionLink("Back", nameof(ProjectController.Details), new { projectId = Model.Id })
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/Scripts/codemirror.js" type="text/javascript"></script>
+    <script src="~/Scripts/myjquery.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            loadDefinitionEditor("@Html.IdFor(model => Model.SessionDefinitionTemplate)");
+        });
+    </script>
+}
