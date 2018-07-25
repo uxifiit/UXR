@@ -19,6 +19,7 @@ namespace UXR.Studies.ViewModels.Recordings
         public string NodeName { get; set; }
 
         [Display(Name = "Start time")]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}")]
         public DateTime StartTime { get; set; }
     }
 }

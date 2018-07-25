@@ -19,16 +19,16 @@
             }
         }
             <div class="nodeStatus @nodeStatusClass">
-                <span class="col-md-12 lead">@node.NodeName</span>
+                <span class="col-md-12 lead">@Html.DisplayFor(model => node.NodeName)</span>
                 <span class="col-md-12">Last update:</span>
-                <span class="col-md-12">@node.UpdatedAt</span>
+                <span class="col-md-12">@Html.DisplayFor(model => node.UpdatedAt)</span>
                 @if (node.IsRecording)
                 {
                     <span class="col-md-12"> Recording </span>
                     if (node.SessionName != null)
                     {
-                        <span class="col-md-12"><strong>@node.SessionName</strong></span>
-                        <span class="col-md-12"><strong>@node.SessionProjectName</strong></span>
+                        <span class="col-md-12"><strong>@Html.DisplayFor(model => node.SessionName)</strong></span>
+                        <span class="col-md-12"><strong>@Html.DisplayFor(model => node.SessionProjectName)</strong></span>
                     }
                     else
                     {
