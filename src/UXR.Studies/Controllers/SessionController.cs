@@ -496,18 +496,6 @@ namespace UXR.Studies.Controllers
             return PartialView(viewModel);
         }
 
-        /*
-        // For now, the plan is to provide the data through FTP or direct access to the server
-        [HttpPost]
-        [Route(Routes.ACTION_PREPARE_RECORDINGS_DOWNLOAD)]
-        public HttpResponseMessage PrepareRecordingsDownload(SessionViewModel session)
-        {
-            // TODO - Implement compression of files and their providal
-
-            return new HttpResponseMessage(HttpStatusCode.OK);
-        }
-        */
-
 
         [HttpGet]
         [Route(Routes.Session.ACTION_DOWNLOAD)]
@@ -543,8 +531,8 @@ namespace UXR.Studies.Controllers
                                 foreach (var recording in sessionRecordings)
                                 foreach (var recordingFile in recording.EnumerateFiles())
                                 {
-                                    zipStream.PutNextEntry(recording.NodeName + "\\" + recordingFile.RelativePath);
-
+                                    zipStream.PutNextEntry(recording.NodeName + "/" + recordingFile.RelativePath.Replace("\\", "/").TrimStart('/'));
+                                    
                                     using (var stream = recordingFile.OpenReadStream())
                                     {
                                         stream.CopyTo(zipStream);
