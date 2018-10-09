@@ -10,7 +10,7 @@ using UXR.Studies.Models;
 using UXR.Studies.ViewModels;
 using UXI.Common.Extensions;
 
-namespace UXR.Studies.Files.Management
+namespace UXR.Studies.Files
 {
     public class RecordingFilesManager
     {
@@ -215,30 +215,40 @@ namespace UXR.Studies.Files.Management
         }
 
 
+        public IEnumerable<Recording> GetProjectRecordings(Project project)
+        {
+            project.ThrowIfNull(nameof(project));
+
+            return project.Sessions
+                          .Where(s => s != null)
+                          .SelectMany(s => GetSessionRecordings(s))
+                          .ToList();
+        }
+
+
         public IEnumerable<Recording> GetSessionRecordings(Session session)
         {
-            if (session != null)
+            session.ThrowIfNull(nameof(session));
+
+            string sessionName = session.Name ?? String.Empty;
+            string projectName = session.Project.Name ?? String.Empty;
+
+            string sessionDirPath = Paths.SessionDirectory(session.Project.Owner.Email, session.Project.Name, session.Name);
+            var sessionDir = new DirectoryInfo(sessionDirPath);
+
+            if (sessionDir.Exists)
             {
-                string sessionName = session.Name ?? String.Empty;
-                string projectName = session.Project?.Name ?? String.Empty;
+                var recordings = new List<Recording>();
 
-                string sessionDirPath = Paths.SessionDirectory(session.Project.Owner.Email, session.Project.Name, session.Name);
-                var sessionDir = new DirectoryInfo(sessionDirPath);
-
-                if (sessionDir.Exists)
+                foreach (var recording in EnumerateRecordings(sessionDir))
                 {
-                    var recordings = new List<Recording>();
+                    recording.SessionName = sessionName;
+                    recording.ProjectName = projectName;
 
-                    foreach (var recording in EnumerateRecordings(sessionDir))
-                    {
-                        recording.SessionName = sessionName;
-                        recording.ProjectName = projectName;
-
-                        recordings.Add(recording);
-                    }
-
-                    return recordings;
+                    recordings.Add(recording);
                 }
+
+                return recordings;
             }
 
             return Enumerable.Empty<Recording>();

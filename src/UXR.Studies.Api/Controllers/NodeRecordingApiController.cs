@@ -11,7 +11,6 @@ using System.Web.Http;
 using UXR.Studies.Api.Entities;
 using UXR.Studies.Api.Files.Transfer;
 using UXR.Studies.Files;
-using UXR.Studies.Files.Management;
 using UXR.Studies.Models;
 using UXR.Studies.Models.Queries;
 

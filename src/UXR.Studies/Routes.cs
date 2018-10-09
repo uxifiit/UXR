@@ -19,6 +19,7 @@ namespace UXR.Studies
             public const string ACTION_DETAILS = PARAM_PROJECT_ID;
             public const string ACTION_EDIT = PARAM_PROJECT_ID + "/" + Routes.ACTION_EDIT;
             public const string ACTION_DELETE = PARAM_PROJECT_ID + "/" + Routes.ACTION_DELETE;
+            public const string ACTION_DOWNLOAD = PARAM_PROJECT_ID + "/" + "download";
         }
 
 

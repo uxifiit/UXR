@@ -13,7 +13,7 @@ using UXR.Models;
 using PagedList;
 using UXI.Common.Web.Extensions;
 using UXI.CQRS;
-using UXR.Studies.Files.Management;
+using UXR.Studies.Files;
 using System.IO;
 using UXR.Models.Entities;
 using Microsoft.AspNet.Identity;
@@ -24,6 +24,7 @@ using UXR.Studies.ViewModels.Users;
 using UXR.Studies.ViewModels.SessionTemplates;
 using UXR.Studies.ViewModels.Sessions;
 using UXR.Studies.Controllers.Validation;
+using UXR.Studies.Extensions;
 
 namespace UXR.Studies.Controllers
 {
@@ -67,13 +68,22 @@ namespace UXR.Studies.Controllers
         private readonly CommandDispatcher _dispatcher;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RecordingFilesManager _recordings;
+        private readonly ZipHelper _zip;
 
-        public ProjectController(StudiesDatabase database, CommandDispatcher dispatcher, UserManager<ApplicationUser> userManager, RecordingFilesManager recordings)
+        public ProjectController
+        (
+            StudiesDatabase database, 
+            CommandDispatcher dispatcher, 
+            UserManager<ApplicationUser> userManager, 
+            RecordingFilesManager recordings,
+            ZipHelper zip
+        )
         {
             _database = database;
             _dispatcher = dispatcher;
             _userManager = userManager;
             _recordings = recordings;
+            _zip = zip;
         }
 
         private const int MIN_PAGE_SIZE = 20;
@@ -317,6 +327,7 @@ namespace UXR.Studies.Controllers
             return HttpNotFound();
         }
 
+
         // GET: Studies/Project/5/Delete/
         [Route(Routes.Project.ACTION_DELETE)]
         public ActionResult Delete(int? projectId)
@@ -341,6 +352,7 @@ namespace UXR.Studies.Controllers
 
             return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
         }
+
 
         // POST: Studies/Project/5/Delete/
         [Route(Routes.Project.ACTION_DELETE)]
@@ -384,6 +396,49 @@ namespace UXR.Studies.Controllers
                             .Include(p => p.Author)
                             .Select(Mapper.Map<SessionTemplateViewModel>)
                             .ToList();
+        }
+
+
+        [HttpGet]
+        [Route(Routes.Project.ACTION_DOWNLOAD)]
+        public ActionResult Download(int? projectId)
+        {
+            if (projectId.HasValue)
+            {
+                Request.ThrowIfDifferentReferrer();
+
+                var project = _database.Projects
+                                       .FilterById(projectId.Value)
+                                       .AsDbQuery()
+                                       .Include(p => p.Owner)
+                                       .SingleOrDefault();
+
+                var currentUser = _userManager.FindById(User.Identity.GetUserId());
+
+                if (project != null
+                    && (project.Owner == currentUser || User.IsInRole(UserRoles.ADMIN)))
+                {
+                    var projectRecordings = _recordings.GetProjectRecordings(project);
+
+                    if (projectRecordings.Any())
+                    {
+                        string filename = $"{project.Name}.zip";
+
+                        return this.StreamFileResult(filename, "application/octet-stream", stream =>
+                        {
+                            _zip.ZipRecordingFiles(projectRecordings, stream, ZipHelper.RecordingFilesPathDepth.Session_Node);
+                        });
+                    }
+
+                    return HttpNotFound();
+                }
+            }
+            else
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            return new HttpStatusCodeResult(HttpStatusCode.BadRequest); // redirect to details, add details, not just edit
         }
     }
 }

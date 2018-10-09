@@ -12,7 +12,6 @@
         <dt>
             @Html.DisplayNameFor(model => model.Description)
         </dt>
-
         <dd>
             @Html.DisplayFor(model => model.Description)
         </dd>
@@ -20,7 +19,6 @@
         <dt>
             @Html.DisplayNameFor(model => model.CreatedAt)
         </dt>
-
         <dd>
             @Html.DisplayFor(model => model.CreatedAt)
         </dd>
@@ -30,9 +28,8 @@
         <dt>
             @Html.DisplayNameFor(model => model.Owner)
         </dt>
-
         <dd>
-            @Html.DisplayFor(model => model.Owner)
+            @Html.DisplayFor(model => model.Owner.UserName)
         </dd>
 }
     </dl>
@@ -40,6 +37,11 @@
 
 <div class="row">
     <div class="col-md-10">
+        @if (Model.Sessions.Any(s => s.RecordingsCount > 0))
+        {
+            @Html.ActionLink("Download all", nameof(ProjectController.Download), new { projectId = Model.Id }, new { @class = $"btn btn-primary btn-sm" })
+        }
+
         @Html.ActionLink("Edit project", nameof(ProjectController.Edit), new { projectId = Model.Id })
     </div>
 </div>
@@ -82,7 +84,7 @@
                 <td>
                     @if (session.RecordingsCount > 0)
                     {
-                        @Html.ActionLink("Download", nameof(SessionController.Download), SessionController.ControllerName, new { sessionId = session.Id }, new { @class = $"btn btn-primary btn-sm" })
+                        @Html.ActionLink($"Download ({session.RecordingsCount})", nameof(SessionController.Download), SessionController.ControllerName, new { sessionId = session.Id }, new { @class = $"btn btn-primary btn-sm" })
                     }
                     else
                     {

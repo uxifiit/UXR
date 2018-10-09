@@ -13,12 +13,11 @@ using UXR.Studies;
 using UXR.Studies.Models;
 using UXR.Studies.ViewModels;
 using UXR.Models;
-using UXR.Studies.Files.Management;
+using UXR.Studies.Files;
 using System.Net.Http;
 using System.IO;
 using Microsoft.AspNet.Identity;
 using UXR.Models.Entities;
-using UXR.Studies.Files;
 using UXR.Studies.Extensions;
 using UXR.Common;
 using UXR.Studies.Models.Queries;
@@ -46,6 +45,7 @@ namespace UXR.Studies.Controllers
         private readonly CommandDispatcher _dispatcher;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RecordingFilesManager _recordings;
+        private readonly ZipHelper _zip;
         private readonly ITimeProvider _timeProvider;
 
 
@@ -84,6 +84,7 @@ namespace UXR.Studies.Controllers
             CommandDispatcher dispatcher, 
             UserManager<ApplicationUser> userManager, 
             RecordingFilesManager recordings,
+            ZipHelper zip,
             ITimeProvider timeProvider
         )
         {
@@ -91,6 +92,7 @@ namespace UXR.Studies.Controllers
             _dispatcher = dispatcher;
             _userManager = userManager;
             _recordings = recordings;
+            _zip = zip;
             _timeProvider = timeProvider;
         }
 
@@ -520,35 +522,11 @@ namespace UXR.Studies.Controllers
                     {
                         string filename = $"{session.Project.Name} - {session.Name}.zip";
 
-                        Response.BufferOutput = false;
-
-                        var serverPipe = new AnonymousPipeServerStream(PipeDirection.Out);
-                        Task.Run(() =>
+                        return this.StreamFileResult(filename, "application/octet-stream", stream =>
                         {
-                            using (serverPipe)
-                            using (var zipStream = new ZipOutputStream(serverPipe))
-                            {
-                                foreach (var recording in sessionRecordings)
-                                foreach (var recordingFile in recording.EnumerateFiles())
-                                {
-                                    zipStream.PutNextEntry(recording.NodeName + "/" + recordingFile.RelativePath.Replace("\\", "/").TrimStart('/'));
-                                    
-                                    using (var stream = recordingFile.OpenReadStream())
-                                    {
-                                        stream.CopyTo(zipStream);
-                                    }
-                                }
-
-                                zipStream.Close();
-                            }
+                            _zip.ZipRecordingFiles(sessionRecordings, stream, ZipHelper.RecordingFilesPathDepth.Node);
                         });
-
-                        var clientPipe = new AnonymousPipeClientStream(PipeDirection.In, serverPipe.ClientSafePipeHandle);
-
-                        return new FileStreamResult(clientPipe, "application/octet-stream")
-                        {
-                            FileDownloadName = filename
-                        };
+                        
                     }
 
                     return HttpNotFound();

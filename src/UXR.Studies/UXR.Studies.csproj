@@ -158,9 +158,11 @@
     <Compile Include="Controllers\SessionTemplateController.cs" />
     <Compile Include="Controllers\Validation\PathNameValidation.cs" />
     <Compile Include="Controllers\Validation\SessionDefinitionValidation.cs" />
+    <Compile Include="Extensions\FileStreamResultControllerEx.cs" />
     <Compile Include="Files\Formats.cs" />
-    <Compile Include="Files\Management\RecordingFilesManager.cs" />
+    <Compile Include="Files\RecordingFilesManager.cs" />
     <Compile Include="Files\Recording.cs" />
+    <Compile Include="Files\ZipHelper.cs" />
     <Compile Include="Modules\CommandHandlersModule.cs" />
     <Compile Include="Modules\ExperimentsDbModule.cs" />
     <Compile Include="Modules\FilesModule.cs" />
