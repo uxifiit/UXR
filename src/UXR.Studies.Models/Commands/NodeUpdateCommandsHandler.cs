@@ -32,14 +32,14 @@ namespace UXR.Studies.Models.Commands
                 {
                     Node = command.Node,
                     IsRecording = command.IsRecording,
-                    Session = command.Session
+                    CurrentSession = command.Session
                 };
                 _context.NodeStates.Add(create);
             }
             else
             {
                 state.IsRecording = command.IsRecording;
-                state.Session = command.Session;
+                state.CurrentSession = command.Session;
             }
         }
     }

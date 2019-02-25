@@ -29,8 +29,7 @@ namespace UXR.Studies.Api.Controllers
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<NodeStatus, NodeStatusInfo>()
-                   .ForMember(u => u.SessionId, e => e.NullSubstitute(null))
-                   .ForMember(u => u.SessionName, e => e.NullSubstitute(null));
+                   .ForMember(u => u.LastUpdateAt, s => s.ResolveUsing(u => u.UpdatedAt ?? u.CreatedAt ?? DateTime.Now));
 
                 cfg.CreateMap<Node, NodeIdInfo>();
             });
@@ -58,7 +57,6 @@ namespace UXR.Studies.Api.Controllers
                                  .OrderBy(n => n.NodeId)
                                  .AsDbQuery()
                                  .Include(u => u.Node)
-                                 .Include(u => u.Session)
                                  .ToList();
 
             return Ok(nodes.Select(Mapper.Map<NodeStatusInfo>).ToArray());
@@ -79,21 +77,13 @@ namespace UXR.Studies.Api.Controllers
                                     .FilterByName(nodeName)
                                     .SingleOrDefault();
 
-                Session session = null;
-                if (status.Recording != null && status.Recording.SessionId.HasValue)
-                {
-                    session = _database.Sessions
-                                       .FilterById(status.Recording.SessionId.Value)
-                                       .SingleOrDefault();
-                }
-
                 if (node != null)
                 {
                     var command = new UpdateNodeStatusCommand()
                     {
                         Node = node,
                         IsRecording = status.Recording != null,
-                        Session = session
+                        Session = status.Recording?.SessionName
                     };
 
                     _dispatcher.Dispatch(command);

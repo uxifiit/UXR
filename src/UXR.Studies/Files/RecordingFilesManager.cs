@@ -74,7 +74,7 @@ namespace UXR.Studies.Files
 
             if (File.Exists(dataFilePath))
             {
-                var outputDirectory = Paths.RecordingPath(userEmail, 
+                var outputDirectory = Paths.RecordingPath(userEmail,
                     projectName,
                     sessionName,
                     nodeName,
@@ -132,7 +132,7 @@ namespace UXR.Studies.Files
             }
         }
 
-        public void UpdateSessionDataLocation(Session session, string previousProjectOwnerEmail, 
+        public void UpdateSessionDataLocation(Session session, string previousProjectOwnerEmail,
             string previousProjectName, string previousSessionName)
         {
             // Use temporary directory because Windows file names are case insensitive
@@ -152,7 +152,7 @@ namespace UXR.Studies.Files
         public void DeleteProjectData(Project project)
         {
             project.ThrowIfNull(nameof(project));
-                        
+
             var directory = Paths.ProjectDirectory(project.Owner.Email, project.Name);
 
             if (Directory.Exists(directory))
@@ -187,8 +187,8 @@ namespace UXR.Studies.Files
                 {
                     string recordingDateTime = recordingDir.Name.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
 
-                    DateTime recordingTime;                 
-                    if (recordingDateTime != null 
+                    DateTime recordingTime;
+                    if (recordingDateTime != null
                         && Formats.TryConvertFromFilePathString(Path.GetFileName(recordingDateTime), out recordingTime))
                     {
                         yield return new Recording(nodeName, recordingTime, recordingDir);
@@ -197,7 +197,7 @@ namespace UXR.Studies.Files
             }
         }
 
-        
+
         public bool HasSessionRecordings(Session session)
         {
             if (session != null)
@@ -289,22 +289,22 @@ namespace UXR.Studies.Files
         {
             var oldDirectory = Paths.RecordingPath(null, null, null, recordingNodeName, recordingStartTime);
 
-            if (session == null || !Directory.Exists(oldDirectory))
+            if (session != null && Directory.Exists(oldDirectory))
             {
-                return false;
+                var newDirectory = Paths.RecordingPath(session.Project.Owner.Email, session.Project.Name, session.Name, recordingNodeName, recordingStartTime);
+
+                if (Directory.Exists(newDirectory))
+                {
+                    //newDirectory = GetNextFileName(newDirectory);
+                    return false;
+                }
+
+                Directory.CreateDirectory(Path.GetDirectoryName(newDirectory));
+                Directory.Move(oldDirectory, newDirectory);
+
+                return true;
             }
-
-            var newDirectory = Paths.RecordingPath(session.Project.Owner.Email, session.Project.Name, session.Name, recordingNodeName, recordingStartTime);
-
-            if (Directory.Exists(newDirectory))
-            {
-                newDirectory = GetNextFileName(newDirectory);
-            }
-
-            Directory.CreateDirectory(Path.GetDirectoryName(newDirectory));
-            Directory.Move(oldDirectory, newDirectory);
-
-            return true;
+            return false;
         }
     }
 }

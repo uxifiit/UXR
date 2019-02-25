@@ -17,10 +17,7 @@ namespace UXR.Studies.Api.Entities.Nodes
         public bool IsRecording { get; set; }
 
         [DataMember(IsRequired = false)]
-        public int? SessionId { get; set; }
-
-        [DataMember(IsRequired = false)]
-        public string SessionName { get; set; }
+        public string CurrentSession { get; set; }
 
         [DataMember]
         public DateTime LastUpdateAt { get; set; }

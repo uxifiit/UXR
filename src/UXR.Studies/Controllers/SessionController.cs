@@ -276,14 +276,14 @@ namespace UXR.Studies.Controllers
                 {
                     var edit = Mapper.Map<EditSessionViewModel>(session);
 
-                    var projects = GetSelectProjectList(currentUser.Id);
+                    var projects = GetProjectSelection(currentUser.Id, User.IsInRole(UserRoles.ADMIN));
                     
                     if (edit.UseProjectDefinitionTemplate)
                     {
                         edit.Definition = session.Project.SessionDefinitionTemplate;
                     }
 
-                    edit.PopulateProjectSelectList(projects);
+                    edit.ResetProjectSelection(projects);
 
                     return View(edit);
                 }
@@ -295,23 +295,13 @@ namespace UXR.Studies.Controllers
         }
 
 
-        private List<SelectProjectViewModel> GetSelectProjectList(string userId)
+        private List<SelectProjectViewModel> GetProjectSelection(string userId, bool isAdmin)
         {
-            IQueryable<Project> projectsQuery;
-
-            if (User.IsInRole(UserRoles.ADMIN))
-            {
-                projectsQuery = _database.Projects;
-            }
-            else
-            {
-                projectsQuery = _database.Projects
-                                         .Where(p => p.Owner.Id == userId);
-            }
-
-            return projectsQuery.OrderBy(p => p.CreatedAt)
-                                .Select(Mapper.Map<SelectProjectViewModel>)
-                                .ToList();
+            return _database.Projects
+                            .FilterByUserRights(userId, isAdmin)    
+                            .OrderBy(p => p.Name)
+                            .Select(Mapper.Map<SelectProjectViewModel>)
+                            .ToList();
         }
 
 
@@ -391,8 +381,8 @@ namespace UXR.Studies.Controllers
 
                     newEdit.OriginalName = session.Name;
 
-                    var projects = GetSelectProjectList(currentUser.Id);
-                    newEdit.PopulateProjectSelectList(projects);
+                    var projects = GetProjectSelection(currentUser.Id, User.IsInRole(UserRoles.ADMIN));
+                    newEdit.ResetProjectSelection(projects);
 
                     //List<RecordingViewModel> recordings = _recordings.GetSessionRecordings(session)
                     //                                                 .Select(Mapper.Map<RecordingViewModel>)

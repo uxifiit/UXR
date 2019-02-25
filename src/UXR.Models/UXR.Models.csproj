@@ -81,6 +81,10 @@
     <Compile Include="Migrations\201803141104527_InitDatabase.Designer.cs">
       <DependentUpon>201803141104527_InitDatabase.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201902251839283_FixRelationsAndReplaceSessionNameInNodeStatusUpdateWithValue.cs" />
+    <Compile Include="Migrations\201902251839283_FixRelationsAndReplaceSessionNameInNodeStatusUpdateWithValue.Designer.cs">
+      <DependentUpon>201902251839283_FixRelationsAndReplaceSessionNameInNodeStatusUpdateWithValue.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RecreateDatabaseInitializer.cs" />
@@ -104,6 +108,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201803141104527_InitDatabase.resx">
       <DependentUpon>201803141104527_InitDatabase.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902251839283_FixRelationsAndReplaceSessionNameInNodeStatusUpdateWithValue.resx">
+      <DependentUpon>201902251839283_FixRelationsAndReplaceSessionNameInNodeStatusUpdateWithValue.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

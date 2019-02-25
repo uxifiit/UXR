@@ -18,11 +18,11 @@ namespace UXR.Studies.ViewModels.Sessions
         public string OriginalName { get; set; }
 
         [AutoMapper.IgnoreMap]
-        public SelectList ProjectSelectList { get; set; }
+        public SelectList ProjectSelection { get; set; }
 
-        public void PopulateProjectSelectList(List<SelectProjectViewModel> projects)
+        public void ResetProjectSelection(List<SelectProjectViewModel> projects)
         {
-            ProjectSelectList = new SelectList(projects, nameof(SelectProjectViewModel.Id), nameof(SelectProjectViewModel.Name), ProjectId);
+            ProjectSelection = new SelectList(projects, nameof(SelectProjectViewModel.Id), nameof(SelectProjectViewModel.Name), ProjectId);
         }
     }
 
@@ -38,7 +38,7 @@ namespace UXR.Studies.ViewModels.Sessions
         [Display(Name = "Start time")]
         [Required(ErrorMessage = "Please set when the session is going to start.")]
         [DataType(DataType.DateTime)]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy HH:mm}")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy HH\\:mm}")]
         public DateTime StartTime { get; set; }
 
         [Display(Name = "Length")]

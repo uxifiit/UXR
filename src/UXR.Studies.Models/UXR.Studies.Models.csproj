@@ -87,7 +87,7 @@
     <Compile Include="Group.cs" />
     <Compile Include="IExperimentsDbContext.cs" />
     <Compile Include="Node.cs" />
-    <Compile Include="NodeState.cs" />
+    <Compile Include="NodeStatus.cs" />
     <Compile Include="Project.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Queries\CommonQueries.cs" />

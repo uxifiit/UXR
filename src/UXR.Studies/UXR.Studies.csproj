@@ -163,6 +163,7 @@
     <Compile Include="Files\RecordingFilesManager.cs" />
     <Compile Include="Files\Recording.cs" />
     <Compile Include="Files\ZipHelper.cs" />
+    <Compile Include="Models\Queries\ProjectQueries.cs" />
     <Compile Include="Modules\CommandHandlersModule.cs" />
     <Compile Include="Modules\ExperimentsDbModule.cs" />
     <Compile Include="Modules\FilesModule.cs" />
@@ -188,12 +189,11 @@
     <Compile Include="ViewModels\GroupNodes\GroupNodeViewModel.cs" />
     <Compile Include="ViewModels\Projects\ProjectViewModel.cs" />
     <Compile Include="ViewModels\Recordings\RecordingViewModel.cs" />
-    <Compile Include="ViewModels\Recordings\SelectableRecordingsViewModel.cs" />
     <Compile Include="ViewModels\Recordings\SessionAssigningViewModel.cs" />
     <Compile Include="ViewModels\Sessions\CreateSessionViewModel.cs" />
+    <Compile Include="ViewModels\Recordings\SelectProjectSessionViewModel.cs" />
     <Compile Include="ViewModels\Sessions\SessionDetailsViewModel.cs" />
     <Compile Include="ViewModels\Sessions\SessionViewModel.cs" />
-    <Compile Include="ViewModels\Sessions\StreamRequirementViewModel.cs" />
     <Compile Include="ViewModels\SessionTemplates\CreateSessionTemplateViewModel.cs" />
     <Compile Include="ViewModels\SessionTemplates\SessionTemplateViewModel.cs" />
     <Compile Include="ViewModels\Users\UserNameViewModel.cs" />

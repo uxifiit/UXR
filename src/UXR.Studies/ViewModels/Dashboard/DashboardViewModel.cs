@@ -36,13 +36,11 @@ namespace UXR.Studies.ViewModels.Dashboard
         public string NodeGroupName { get; set; }
 
         [DataType(DataType.DateTime)]
-        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm:ss}")]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH\\:mm}")]
         public DateTime UpdatedAt { get; set; }
 
         public bool IsRecording { get; set; }
 
-        public string SessionProjectName { get; set; }
-
-        public string SessionName { get; set; }
+        public string CurrentSession { get; set; }
     }
 }

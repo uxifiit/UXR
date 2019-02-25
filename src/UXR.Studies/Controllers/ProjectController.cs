@@ -116,7 +116,7 @@ namespace UXR.Studies.Controllers
             int projectsCount = projectsQuery.Count();
             if (projectsCount > 0)
             {
-                projects = projectsQuery.OrderBy(p => p.CreatedAt)
+                projects = projectsQuery.OrderBy(p => p.Name)
                                         .Page(pageNumber, pageSize)
                                         .ToList();
             }
@@ -380,7 +380,15 @@ namespace UXR.Studies.Controllers
 
                 _recordings.DeleteProjectData(project);
 
+                try
+                {
+
                 _dispatcher.Dispatch(command);
+                }
+                catch (Exception ex)
+                {
+
+                }
 
                 return RedirectToAction(nameof(Index));
             }

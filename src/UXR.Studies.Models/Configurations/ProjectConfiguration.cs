@@ -22,4 +22,23 @@ namespace UXR.Studies.Models.Configurations
                 .WillCascadeOnDelete();
         }
     }
+
+
+    public class GroupConfiguration : EntityTypeConfiguration<Group>
+    {
+        public GroupConfiguration()
+        {
+        }
+    }
+
+
+    public class NodeConfiguration : EntityTypeConfiguration<Node>
+    {
+        public NodeConfiguration()
+        {
+            this.HasRequired(n => n.Group)
+                .WithMany(g => g.Nodes)
+                .WillCascadeOnDelete();
+        }
+    }
 }

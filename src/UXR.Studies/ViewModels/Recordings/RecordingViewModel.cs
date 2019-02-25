@@ -7,19 +7,33 @@ using System.Threading.Tasks;
 
 namespace UXR.Studies.ViewModels.Recordings
 {
+    public class SelectableRecordingViewModel : RecordingViewModel
+    {
+        public SelectableRecordingViewModel() { }
+
+        public SelectableRecordingViewModel(RecordingViewModel recording)
+            : base(recording)
+        { }
+
+        public bool IsSelected { get; set; }
+    }
+
+
     public class RecordingViewModel
     {
-        [Display(AutoGenerateField = false)]
-        public string ProjectName { get; set; }
+        public RecordingViewModel() { }
 
-        [Display(AutoGenerateField = false)]
-        public string SessionName { get; set; }
+        public RecordingViewModel(RecordingViewModel recording)
+        {
+            NodeName = recording.NodeName;
+            StartTime = recording.StartTime;
+        }
 
         [Display(Name = "Node name")]
         public string NodeName { get; set; }
 
         [Display(Name = "Start time")]
-        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy HH\\:mm}")]
         public DateTime StartTime { get; set; }
     }
 }
