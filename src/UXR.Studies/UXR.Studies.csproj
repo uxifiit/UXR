@@ -180,6 +180,7 @@
     <Compile Include="ViewModels\Projects\ProjectDetailsViewModel.cs" />
     <Compile Include="ViewModels\Projects\EditProjectViewModel.cs" />
     <Compile Include="ViewModels\Projects\SelectProjectViewModel.cs" />
+    <Compile Include="ViewModels\Recordings\SelectableRecordingViewModel.cs" />
     <Compile Include="ViewModels\Sessions\CalendarSessionViewModel.cs" />
     <Compile Include="ViewModels\Sessions\CalendarViewModel.cs" />
     <Compile Include="ViewModels\Dashboard\DashboardViewModel.cs" />

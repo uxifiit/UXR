@@ -86,7 +86,7 @@ namespace UXR.Studies.Controllers
 
             if (ModelState.IsValid
                 && assign.Recordings != null
-                && assign.Recordings.Any())
+                && assign.Recordings.Any(r => r.IsSelected))
             {
                 var session = _database.Sessions
                                        .Where(s => s.Id == assign.SessionId

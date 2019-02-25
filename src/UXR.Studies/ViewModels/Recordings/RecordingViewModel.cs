@@ -7,18 +7,6 @@ using System.Threading.Tasks;
 
 namespace UXR.Studies.ViewModels.Recordings
 {
-    public class SelectableRecordingViewModel : RecordingViewModel
-    {
-        public SelectableRecordingViewModel() { }
-
-        public SelectableRecordingViewModel(RecordingViewModel recording)
-            : base(recording)
-        { }
-
-        public bool IsSelected { get; set; }
-    }
-
-
     public class RecordingViewModel
     {
         public RecordingViewModel() { }
@@ -34,6 +22,6 @@ namespace UXR.Studies.ViewModels.Recordings
 
         [Display(Name = "Start time")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy HH\\:mm}")]
-        public DateTime StartTime { get; set; }
+        public virtual DateTime StartTime { get; set; }
     }
 }

@@ -24,6 +24,7 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -341,6 +342,7 @@
     <Content Include="Areas\Studies\Views\SessionTemplate\Index.cshtml" />
     <Content Include="Areas\Studies\Views\SessionTemplate\Create.cshtml" />
     <Content Include="Areas\Studies\Views\SessionTemplate\Delete.cshtml" />
+    <Content Include="Areas\Studies\Views\Shared\EditorTemplates\HiddenDate.cshtml" />
     <None Include="connectionStrings.config.sample" />
     <Content Include="deployment.config" />
     <Content Include="deployment.config.sample" />
