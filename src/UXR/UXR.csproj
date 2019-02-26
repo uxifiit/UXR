@@ -343,9 +343,9 @@
     <Content Include="Areas\Studies\Views\SessionTemplate\Create.cshtml" />
     <Content Include="Areas\Studies\Views\SessionTemplate\Delete.cshtml" />
     <Content Include="Areas\Studies\Views\Shared\EditorTemplates\HiddenDate.cshtml" />
-    <None Include="connectionStrings.config.sample" />
-    <Content Include="deployment.config" />
+    <Content Include="connectionStrings.config.sample" />
     <Content Include="deployment.config.sample" />
+    <Content Include="deployment.config" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Account\_ExternalLoginsListPartial.cshtml" />
     <Content Include="Views\Account\ConfirmEmail.cshtml" />
@@ -366,11 +366,13 @@
     <Content Include="Views\Manage\SetPassword.cshtml" />
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\User\Index.cshtml" />
+    <Content Include="smtp.config.sample" />
     <None Include="Properties\PublishProfiles\Deploy.pubxml" />
     <Content Include="Views\Error\NotFound.cshtml" />
     <Content Include="Views\Error\Forbidden.cshtml" />
     <Content Include="Views\Error\ServerError.cshtml" />
     <None Include="Properties\PublishProfiles\DeployStaging.pubxml" />
+    <None Include="smtp.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

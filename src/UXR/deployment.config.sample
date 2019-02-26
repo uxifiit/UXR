@@ -2,4 +2,5 @@
   <add key="DataPath" value="C:\UXR\Streams" />
   <add key="FirstUserName" value="admin@domain.com" />
   <add key="FirstUserPassword" value="password" />
+  <add key="AllowedEmailDomains" value="" />
 </DeploymentConfig>

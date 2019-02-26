@@ -54,7 +54,6 @@ namespace UXR.Controllers
         [Authorize(Roles = UserRoles.ADMIN)]
         public async Task<ActionResult> Index(ManageUsersListViewModel userList)
         {
-
             Request.ThrowIfDifferentReferrer();
             
             var users = _database.Users

@@ -55,7 +55,7 @@ namespace UXR.Models
 
                 var store = new UserStore<ApplicationUser>(context);
                 var manager = new UserManager<ApplicationUser>(store);
-                var user = new ApplicationUser { UserName = superAdminUserName, Email = superAdminUserName };
+                var user = new ApplicationUser { UserName = superAdminUserName, Email = superAdminUserName, EmailConfirmed = true };
 
                 manager.Create(user, superAdminDefaultPassword);
                 manager.AddToRole(user.Id, UserRoles.SUPERADMIN);

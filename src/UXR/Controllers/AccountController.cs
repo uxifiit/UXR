@@ -10,6 +10,10 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using UXR.ViewModels;
 using UXR.Models.Entities;
+using System.Collections.Specialized;
+using System.Configuration;
+using UXR.Models;
+using UXI.Common.Extensions;
 
 namespace UXR.Controllers
 {
@@ -18,6 +22,8 @@ namespace UXR.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+
+        private const string invalidEmailMessage = "Invalid e-mail address";
 
         public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
         {
@@ -146,28 +152,51 @@ namespace UXR.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid
+                && ValidateEmailAddress(nameof(RegisterViewModel.Email), model.Email))
             {
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
+
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
-                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                    string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                    UserManager.SendEmailAsync(user.Id, "Confirm your account", callbackUrl).Forget();
 
                     return RedirectToAction("Index", "Home");
                 }
+
                 AddErrors(result);
             }
 
             // If we got this far, something failed, redisplay form
             return View(model);
         }
+
+
+        private bool ValidateEmailAddress(string property, string email)
+        {
+            var deploymentConfig = ((NameValueCollection)ConfigurationManager.GetSection("DeploymentConfig"));
+            string setting = deploymentConfig["AllowedEmailDomains"] ?? String.Empty;
+            string[] allowedEmailDomains = setting.Split(new[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries).Select(d => d.Trim().ToLower()).ToArray();
+            string domain = email.Split('@').LastOrDefault()?.Trim().ToLower();
+
+            bool isValid = String.IsNullOrWhiteSpace(domain) == false
+                        && (allowedEmailDomains.Any() == false
+                            || allowedEmailDomains.Contains(domain));
+
+            if (isValid == false)
+            {
+                ModelState.AddModelError(property, invalidEmailMessage);
+            }
+
+            return isValid;
+        }
+
 
         //
         // GET: /Account/ConfirmEmail
@@ -179,6 +208,19 @@ namespace UXR.Controllers
                 return View("Error");
             }
             var result = await UserManager.ConfirmEmailAsync(userId, code);
+
+            if (result.Succeeded)
+            {
+                string userEmail = UserManager.FindById(userId).Email;
+
+                var adminUsers = _userManager.Users.Where(u => u.Roles.Any(r => r.RoleId == UserRoles.ADMIN)).ToList();
+                string callbackUrl = Url.Action(nameof(UserController.Index), UserController.ControllerName, null, protocol: Request.Url.Scheme);
+                foreach (var user in adminUsers)
+                {
+                    UserManager.SendEmailAsync(user.Id, $"Approve account for {userEmail}", callbackUrl).Forget();
+                }
+            }
+
             return View(result.Succeeded ? "ConfirmEmail" : "Error");
         }
 
@@ -208,10 +250,10 @@ namespace UXR.Controllers
 
                 // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                 // Send an email with this link
-                // string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
-                // var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);		
-                // await UserManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
-                // return RedirectToAction("ForgotPasswordConfirmation", "Account");
+                string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
+                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                await UserManager.SendEmailAsync(user.Id, "Reset password", callbackUrl);
+                return RedirectToAction("ForgotPasswordConfirmation", "Account");
             }
 
             // If we got this far, something failed, redisplay form

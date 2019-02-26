@@ -149,7 +149,8 @@ namespace UXR
 
             kernel.Bind<ApplicationUserManager>().ToMethod((context) =>
             {
-                var ifc = context.Kernel.Get<IdentityFactoryOptions<ApplicationUserManager>>();
+                var ifc = context.Kernel.Get<IdentityFactoryOptions<ApplicationUserManager>>(); 
+                ifc.DataProtectionProvider = ifc.DataProtectionProvider ?? new Microsoft.Owin.Security.DataProtection.DpapiDataProtectionProvider("UXR");
                 var userStore = context.Kernel.Get<IUserStore<ApplicationUser>>();
                 return ApplicationUserManager.Create(ifc, userStore);
             }).InRequestScope();
@@ -173,9 +174,6 @@ namespace UXR
             kernel.Load
             (
                 new UXR.Modules.IdentityDbModule(),
-                //new PLUS.PackageStore.Modules.PackagingModule(packagePath),
-                //new PLUS.PackageStore.Modules.PackageStoreDbModule(),
-                //new PLUS.PackageStore.Modules.CommandHandlersModule(),
                 new UXR.Studies.Modules.StudiesDbModule(),
                 new UXR.Studies.Modules.CommandHandlersModule(),
                 new UXR.Studies.Modules.FilesModule()
