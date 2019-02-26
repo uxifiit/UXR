@@ -22,6 +22,7 @@ namespace UXR.ViewModels
             Id = user.Id;
             IsAdmin = user.Roles.Any(r => r.RoleId == adminRole.Id);
             Approved = user.Roles.Any(r => r.RoleId == approvedRole.Id);
+            IsConfirmed = user.EmailConfirmed;
         }
 
         [Display(Name = "Username")]
@@ -31,6 +32,9 @@ namespace UXR.ViewModels
 
         [Display(Name = "Is Admin")]
         public bool IsAdmin { get; set; }
+
+        [Display(Name = "Is Confirmed")]
+        public bool IsConfirmed { get; set; }
 
         [Display(Name = "Approve")]
         public bool Approved { get; set; }

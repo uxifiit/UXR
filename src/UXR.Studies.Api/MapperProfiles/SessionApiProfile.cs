@@ -23,7 +23,7 @@ namespace UXR.Studies.Api.MapperProfiles
                   .ForMember(s => s.Description,
                              e => e.MapFrom(session => session.Project.Description))
                   .ForMember(s => s.CreatedAt,
-                             e => e.ResolveUsing(s => s.CreatedAt?.ToLocalTime() ?? s.UpdatedAt?.ToLocalTime() ?? DateTime.Now))
+                             e => e.ResolveUsing(s => s.UpdatedAt?.ToLocalTime() ?? s.CreatedAt?.ToLocalTime() ?? DateTime.Now))
                   .ForMember(s => s.Definition,
                              e => e.ResolveUsing(s => new JRaw(JToken.Parse(s.Definition ?? s.Project.SessionDefinitionTemplate ?? String.Empty))));
         }

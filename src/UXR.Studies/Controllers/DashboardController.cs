@@ -60,14 +60,12 @@ namespace UXR.Studies.Controllers
         private DashboardViewModel GetDashboardViewModel()
         {
             var nodeStates = _database.NodeStates
-                                      .OrderBy(n => n.Node.Group.Name)
-                                      .ThenBy(n => n.Node.Name)
                                       .AsDbQuery()
                                       .Include(n => n.Node.Group)
-                                      .Include(n => n.Session.Project)
-                                      .ToList()
                                       .GroupBy(n => n.Node.Group)
-                                      .Select(g => new NodeStatusGroupViewModel(g.Key.Name, g.Select(Mapper.Map<NodeStatusViewModel>)));
+                                      .ToList()
+                                      .OrderBy(g => g.Key.Name)
+                                      .Select(g => new NodeStatusGroupViewModel(g.Key.Name, g.OrderBy(n => n.Node.Name).Select(Mapper.Map<NodeStatusViewModel>)));
 
             return new DashboardViewModel(nodeStates);
         }

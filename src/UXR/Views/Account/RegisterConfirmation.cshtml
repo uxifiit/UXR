@@ -1,0 +1,17 @@
+﻿@{
+    ViewBag.Title = "Confirm Account";
+}
+
+<hgroup class="title">
+    <h1>@ViewBag.Title</h1>
+</hgroup>
+<div>
+    <p>
+        Please check your e-mail to confirm your account.
+    </p>
+
+    <p>
+        @Html.ActionLink("Resend confirmation e-mail", "ResendConfirmEmail")
+    </p>
+</div>
+	

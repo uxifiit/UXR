@@ -25,21 +25,18 @@
                 @if (node.IsRecording)
                 {
                     <span class="col-md-12"> Recording </span>
-                    if (node.SessionName != null)
+                    if (String.IsNullOrWhiteSpace(node.CurrentSession) == false)
                     {
-                        <span class="col-md-12"><strong>@Html.DisplayFor(model => node.SessionName)</strong></span>
-                        <span class="col-md-12"><strong>@Html.DisplayFor(model => node.SessionProjectName)</strong></span>
+                        <span class="col-md-12"><strong>@Html.DisplayFor(model => node.CurrentSession)</strong></span>
                     }
                     else
                     {
-                        <span class="col-md-12"> &#8203 </span>
                         <span class="col-md-12"> &#8203 </span>
                     }
                 }
                 else
                 {
                     <span class="col-md-12"> Not recording </span>
-                    <span class="col-md-12"> &#8203 </span>
                     <span class="col-md-12"> &#8203 </span>
                 }
             </div>

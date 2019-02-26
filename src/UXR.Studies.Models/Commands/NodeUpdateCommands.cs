@@ -14,6 +14,6 @@ namespace UXR.Studies.Models.Commands
 
         public bool IsRecording { get; set; }
 
-        public Session Session { get; set; }
+        public string Session { get; set; }
     }
 }

@@ -16,7 +16,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.ProjectId, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownList(nameof(Model.ProjectId), Model.ProjectSelectList, "Select project", htmlAttributes: new { @id = "ProjectSelect", @class = "form-control" })
+                @Html.DropDownList(nameof(Model.ProjectId), Model.ProjectSelection, "Select project", htmlAttributes: new { @id = "ProjectSelect", @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.ProjectId, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -43,7 +43,7 @@
                         @Html.DisplayNameFor(model => model.Recordings.FirstOrDefault().StartTime)
                     </th>
                     <th>
-                        <input type="checkbox" id="CheckAll" checked /> Select all
+                        <input type="checkbox" id="CheckAll" />
                     </th>
                     <th></th>
                 </tr>
@@ -57,10 +57,10 @@
                         </td>
                         <td>
                             @Html.DisplayFor(model => Model.Recordings[i].StartTime)
-                            @Html.HiddenFor(model => Model.Recordings[i].StartTime)
+                            @Html.EditorFor(model => Model.Recordings[i].StartTime)
                         </td>
                         <td>
-                            @Html.CheckBoxFor(model => Model.RecordingSelections[i], new { @id = "RecordingSelection", @class = "recordingSelection" })
+                            @Html.CheckBoxFor(model => Model.Recordings[i].IsSelected, new { @class = "recordingSelection" })
                         </td>
                     </tr>
                 }
@@ -112,9 +112,9 @@
 
                     var projectIndex = $("#ProjectSelect option:selected").index();
 
-                    var sessionSelectLists = @Html.Raw(Json.Encode(Model.SessionSelectLists))
+                    var sessionSelectLists = @Html.Raw(Json.Encode(Model.SessionSelections))
 
-                    $.each(sessionSelectLists[projectIndex-1], function (i, session) {
+                    $.each(sessionSelectLists[projectIndex - 1], function (i, session) {
                         $("#SessionSelect").append(
                             $('<option></option>').val(session.Value).html(session.Text));
                     });

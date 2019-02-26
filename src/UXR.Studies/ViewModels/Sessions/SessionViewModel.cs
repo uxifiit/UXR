@@ -19,7 +19,7 @@ namespace UXR.Studies.ViewModels.Sessions
 
         [Display(Name = "Start time")]
         [DataType(DataType.DateTime)]
-        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}")]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH\\:mm}")]
         public DateTime StartTime { get; set; }
 
         [Display(Name = "Length")]

@@ -1,12 +1,12 @@
-﻿@model UXR.ViewModels.ForgotPasswordViewModel
+﻿@model UXR.ViewModels.ResendConfirmEmailViewModel
 @{
-    ViewBag.Title = "Forgot your password?";
+    ViewBag.Title = "Account confirmation";
 }
 
 <h2>@ViewBag.Title.</h2>
 
 
-@using (Html.BeginForm("ForgotPassword", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+@using (Html.BeginForm("ResendConfirmEmail", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
 {
     @Html.AntiForgeryToken()
     <h4>Enter your email.</h4>
@@ -25,4 +25,3 @@
         </div>
     </div>
 }
-

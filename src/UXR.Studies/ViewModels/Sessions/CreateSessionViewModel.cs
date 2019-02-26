@@ -25,7 +25,7 @@ namespace UXR.Studies.ViewModels.Sessions
         [Display(Name = "Start time")]
         [Required(ErrorMessage = "Please set when the session is going to start.")]
         [DataType(DataType.DateTime)]
-        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH\\:mm}", ApplyFormatInEditMode = true)]
         public DateTime StartTime { get; set; }
 
         [Display(Name = "Length")]

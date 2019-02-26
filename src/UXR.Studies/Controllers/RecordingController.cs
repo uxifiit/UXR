@@ -15,6 +15,8 @@ using AutoMapper;
 using UXR.Models;
 using UXR.Studies.Models.Queries;
 using UXR.Studies.ViewModels.Recordings;
+using Microsoft.AspNet.Identity;
+using UXR.Models.Entities;
 
 namespace UXR.Studies.Controllers
 {
@@ -32,6 +34,8 @@ namespace UXR.Studies.Controllers
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<Recording, RecordingViewModel>();
+                cfg.CreateMap<Session, SelectSessionViewModel>();
+                cfg.CreateMap<Project, SelectProjectSessionViewModel>();
             });
 
             Mapper = config.CreateMapper();
@@ -39,13 +43,15 @@ namespace UXR.Studies.Controllers
 
 
         private readonly StudiesDatabase _database;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly CommandDispatcher _dispatcher;
         private readonly RecordingFilesManager _recordings;
 
 
-        public RecordingController(StudiesDatabase database, CommandDispatcher dispatcher, RecordingFilesManager recordings)
+        public RecordingController(StudiesDatabase database, UserManager<ApplicationUser> userManager, CommandDispatcher dispatcher, RecordingFilesManager recordings)
         {
             _database = database;
+            _userManager = userManager;
             _dispatcher = dispatcher;
             _recordings = recordings;
         }
@@ -54,15 +60,18 @@ namespace UXR.Studies.Controllers
         [Route(Routes.Recording.ACTION_ASSIGN_SESSION)]
         public ActionResult AssignSession()
         {
-            var projects = _database.Projects
-                        .OrderBy(p => p.CreatedAt)
-                        .ToList();
+            var currentUser = _userManager.FindById(User.Identity.GetUserId());
 
             List<RecordingViewModel> recordings = _recordings.GetUnassignedRecordings()
+                                                             .OrderBy(r => r.StartTime)
                                                              .Select(Mapper.Map<RecordingViewModel>)
                                                              .ToList();
 
-            return View(new SessionAssigningViewModel(projects, recordings));
+            var assign = new SessionAssigningViewModel(recordings.Select(r => new SelectableRecordingViewModel(r)));
+
+            assign.ResetProjectSelection(GetProjectSessionSelection(currentUser.Id, User.IsInRole(UserRoles.ADMIN)));
+
+            return View(assign);
         }
 
 
@@ -73,20 +82,23 @@ namespace UXR.Studies.Controllers
         {
             Request.ThrowIfDifferentReferrer();
 
-            if (ModelState.IsValid)
+            var currentUser = _userManager.FindById(User.Identity.GetUserId());
+
+            if (ModelState.IsValid
+                && assign.Recordings != null
+                && assign.Recordings.Any(r => r.IsSelected))
             {
                 var session = _database.Sessions
-                                       .Where(s => s.Id == assign.SessionId)
+                                       .Where(s => s.Id == assign.SessionId
+                                                   && s.ProjectId == assign.ProjectId)
                                        .AsDbQuery()
                                        .Include(s => s.Project.Owner)
                                        .SingleOrDefault();
 
-                if (session != null && session.ProjectId == assign.ProjectId)
+                if (session != null 
+                    && (session.Project.Owner.Id == currentUser.Id || User.IsInRole(UserRoles.ADMIN)))
                 {
-                    var selectedRecordings = assign.Recordings
-                                                   .Zip(assign.RecordingSelections, 
-                                                        (recording, isSelected) => isSelected ? recording : null)
-                                                   .Where(r => r != null);
+                    var selectedRecordings = assign.Recordings.Where(r => r.IsSelected);
 
                     foreach (var recording in selectedRecordings)
                     {
@@ -97,11 +109,23 @@ namespace UXR.Studies.Controllers
                 }
 
                 ModelState.AddModelError(nameof(assign.SessionId), "Session was not selected.");
-
-                return View(assign);
             }
 
-            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            assign.ResetProjectSelection(GetProjectSessionSelection(currentUser.Id, User.IsInRole(UserRoles.ADMIN)));
+
+            return View(assign);
+        }
+
+
+        private List<SelectProjectSessionViewModel> GetProjectSessionSelection(string userId, bool isAdmin)
+        {
+            return _database.Projects
+                            .FilterByUserRights(userId, isAdmin)
+                            .OrderBy(p => p.Name)
+                            .AsDbQuery()
+                            .Include(p => p.Sessions)
+                            .Select(Mapper.Map<SelectProjectSessionViewModel>)
+                            .ToList();
         }
     }
 }

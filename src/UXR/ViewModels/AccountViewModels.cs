@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace UXR.ViewModels
@@ -46,6 +47,13 @@ namespace UXR.ViewModels
         public string Email { get; set; }
     }
 
+    public class ResendConfirmEmailViewModel
+    {
+        [Required]
+        [Display(Name = "Email")]
+        public string Email { get; set; }
+    }
+
     public class LoginViewModel
     {
         [Required]
@@ -60,6 +68,9 @@ namespace UXR.ViewModels
 
         [Display(Name = "Remember me?")]
         public bool RememberMe { get; set; }
+
+        [ReadOnly(true)]
+        public bool OfferResendConfirmEmail { get; set; }
     }
 
     public class RegisterViewModel

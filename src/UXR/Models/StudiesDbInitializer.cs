@@ -15,27 +15,27 @@ namespace UXR.Studies
         {
             return @"
 { 
-  devices: [
-    { device: ""ET"" }, 
-    { device: ""EXTEV"" },
-    { device: ""KB"" }, 
-    { device: ""ME"" },
-    { device: ""WCV"" }, 
-    { device: ""SC"" }
+  ""devices"": [
+    { ""device"": ""ET"" }, 
+    { ""device"": ""EXTEV"" },
+    { ""device"": ""KB"" }, 
+    { ""device"": ""ME"" },
+    { ""device"": ""WCV"" }, 
+    { ""device"": ""SC"" }
   ],
-  preSessionSteps: [
-    { action: { actionType: ""EyeTrackerCalibration"" } } 
+  ""welcome"": {
+    ""ignore"": true
+  },
+  ""preSessionSteps"": [
+    { ""action"": { ""actionType"": ""EyeTrackerCalibration"" } } 
   ],
-  sessionSteps: [
-    { action: { actionType: ""EyeTrackerValidation"" } },
+  ""sessionSteps"": [
+    { ""action"": { ""actionType"": ""EyeTrackerValidation"" } },
     { 
-      action: { actionType: ""ShowDesktop"", minimizeAll: false }, 
-      completion: { shortcuts: [ ""F10"" ] } 
+      ""action"": { ""actionType"": ""ShowDesktop"", ""minimizeAll"": false }, 
+      ""completion"": { ""hotkeys"": [ ""F10"" ] } 
     }
-  ],
-  welcome: {
-    ignore: true
-  }
+  ]
 }".Trim();
         }
 

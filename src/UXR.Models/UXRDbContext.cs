@@ -25,9 +25,6 @@ namespace UXR.Models
         public DbSet<Project> Projects { get { return Set<Project>(); } }
         public DbSet<Session> Sessions { get { return Set<Session>(); } }
         public DbSet<SessionTemplate> SessionTemplates { get { return Set<SessionTemplate>(); } }
-        //public DbSet<StreamType> StreamTypes { get { return Set<StreamType>(); } }
-        //public DbSet<StreamTypeOption> StreamTypeOptions { get { return Set<StreamTypeOption>(); } }
-        //public DbSet<ProjectStreamSetting> ProjectStreamSettings { get { return Set<ProjectStreamSetting>(); } }
         public DbSet<NodeStatus> NodeStates { get { return Set<NodeStatus>(); } }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -36,6 +33,7 @@ namespace UXR.Models
 
             modelBuilder.Configurations.Add(new NodeStatusConfiguration());
             modelBuilder.Configurations.Add(new ProjectConfiguration());
+            modelBuilder.Configurations.Add(new NodeConfiguration());
         }
 
         public override int SaveChanges()
