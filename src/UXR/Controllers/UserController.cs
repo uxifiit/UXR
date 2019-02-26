@@ -33,17 +33,18 @@ namespace UXR.Controllers
         public ActionResult Index()
         {
             var adminRole = _database.Roles
-                .Where(r => r.Name == UserRoles.ADMIN)
-                .SingleOrDefault();
+                                     .Where(r => r.Name == UserRoles.ADMIN)
+                                     .SingleOrDefault();
 
             var approvedRole = _database.Roles
-                .Where(r => r.Name == UserRoles.APPROVED)
-                .SingleOrDefault();
+                                        .Where(r => r.Name == UserRoles.APPROVED)
+                                        .SingleOrDefault();
 
             var users = _database.Users
-                .AsDbQuery()
-                .ToList();
-
+                                 .OrderBy(u => u.Email)
+                                 .AsDbQuery()
+                                 .ToList();
+                 
             return View(new ManageUsersListViewModel(users, adminRole, approvedRole));
         }
 
@@ -57,20 +58,21 @@ namespace UXR.Controllers
             Request.ThrowIfDifferentReferrer();
             
             var users = _database.Users
-                .AsDbQuery()
-                .ToList();
+                                 .OrderBy(u => u.Email)
+                                 .AsDbQuery()
+                                 .ToList();
 
             var adminRole = _database.Roles
-                .Where(r => r.Name == UserRoles.ADMIN)
-                .SingleOrDefault();
+                                     .Where(r => r.Name == UserRoles.ADMIN)
+                                     .SingleOrDefault();
 
             var superAdminRole = _database.Roles
-                .Where(r => r.Name == UserRoles.SUPERADMIN)
-                .SingleOrDefault();
+                                          .Where(r => r.Name == UserRoles.SUPERADMIN)
+                                          .SingleOrDefault();
 
             var approvedRole = _database.Roles
-                .Where(r => r.Name == UserRoles.APPROVED)
-                .SingleOrDefault();
+                                        .Where(r => r.Name == UserRoles.APPROVED)
+                                        .SingleOrDefault();
 
             foreach (ManageUserViewModel userViewModel in userList.Users)
             {
@@ -78,6 +80,12 @@ namespace UXR.Controllers
 
                 if (user != null)
                 {
+                    if (user.EmailConfirmed == false && userViewModel.IsConfirmed)
+                    {
+                        string code = await _userManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                        await _userManager.ConfirmEmailAsync(user.Id, code);
+                    }
+
                     if (userViewModel.Approved)
                     {
                         await _userManager.AddToRoleAsync(user.Id, UserRoles.APPROVED);

@@ -373,6 +373,8 @@
     <Content Include="Views\Error\ServerError.cshtml" />
     <None Include="Properties\PublishProfiles\DeployStaging.pubxml" />
     <None Include="smtp.config" />
+    <Content Include="Views\Account\ResendConfirmEmail.cshtml" />
+    <Content Include="Views\Account\RegisterConfirmation.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

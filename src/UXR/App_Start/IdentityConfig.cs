@@ -21,32 +21,33 @@ namespace UXR
 {
     public class EmailService : IIdentityMessageService
     {
-        public Task SendAsync(IdentityMessage message)
+        public async Task SendAsync(IdentityMessage message)
         {
             // Plug in your email service here to send an email.
             string text = String.Format("Please click on this link to {0}: {1}", message.Subject.ToLower(), message.Body);
-            string html = String.Format("Please click on this link to {0}: <a href=\"{1}\">link</a><br/>", message.Subject.ToLower(), message.Body);
+            string html = String.Format("Please click on this link to {0}: <a href=\"{1}\">link</a><br/><br/>Or copy and open the following link in the browser:<br/>{1}", message.Subject.ToLower(), message.Body);
 
-            html += HttpUtility.HtmlEncode(@"Or copy and open the following link in the browser:<br/>" + message.Body);
-
-            HostingEnvironment.QueueBackgroundWorkItem(cancel =>
+            using (var client = new SmtpClient())
+            using (var mail = new MailMessage())
             {
-                if (cancel.IsCancellationRequested == false)
-                {
-                    using (var client = new SmtpClient())
-                    using (var mail = new MailMessage())
+                mail.To.Add(new MailAddress(message.Destination));
+                mail.Subject = "[UXR] " + message.Subject;
+                mail.AlternateViews.Add(AlternateView.CreateAlternateViewFromString(text, null, MediaTypeNames.Text.Plain));
+                mail.AlternateViews.Add(AlternateView.CreateAlternateViewFromString(html, null, MediaTypeNames.Text.Html));
+
+                await AsyncHelper.InvokeAsync<SendCompletedEventHandler>
+                (
+                    () => client.SendAsync(mail, null),
+                    h => client.SendCompleted += h,
+                    h => client.SendCompleted -= h,
+                    (tcs) => (s, e) =>
                     {
-                        mail.To.Add(new MailAddress(message.Destination));
-                        mail.Subject = "[UXR] " + message.Subject;
-                        mail.AlternateViews.Add(AlternateView.CreateAlternateViewFromString(text, null, MediaTypeNames.Text.Plain));
-                        mail.AlternateViews.Add(AlternateView.CreateAlternateViewFromString(html, null, MediaTypeNames.Text.Html));
-
-                        client.Send(mail);
+                        if (e.Cancelled) { tcs.TrySetCanceled(); }
+                        else if (e.Error != null) { tcs.TrySetException(e.Error); }
+                        else { tcs.TrySetResult(true); }
                     }
-                }
-            });
-
-            return Task.FromResult(0);
+                );
+            }
         }
     }
 
@@ -94,15 +95,15 @@ namespace UXR
 
             // Register two factor authentication providers. This application uses Phone and Emails as a step of receiving a code for verifying the user
             // You can write your own provider and plug it in here.
-            manager.RegisterTwoFactorProvider("Phone Code", new PhoneNumberTokenProvider<ApplicationUser>
-            {
-                MessageFormat = "Your security code is {0}"
-            });
-            manager.RegisterTwoFactorProvider("Email Code", new EmailTokenProvider<ApplicationUser>
-            {
-                Subject = "Security Code",
-                BodyFormat = "Your security code is {0}"
-            });
+            //manager.RegisterTwoFactorProvider("Phone Code", new PhoneNumberTokenProvider<ApplicationUser>
+            //{
+            //    MessageFormat = "Your security code is {0}"
+            //});
+            //manager.RegisterTwoFactorProvider("Email Code", new EmailTokenProvider<ApplicationUser>
+            //{
+            //    Subject = "Security Code",
+            //    BodyFormat = "Your security code is {0}"
+            //});
             manager.EmailService = new EmailService();
             manager.SmsService = new SmsService();
             var dataProtectionProvider = options.DataProtectionProvider;
