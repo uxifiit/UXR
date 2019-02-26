@@ -16,6 +16,10 @@ namespace UXR.Studies.ViewModels.Recordings
         [Display(Name = "Start time")]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH\\:mm}")]
         [UIHint("HiddenDate")]
-        public override DateTime StartTime { get => base.StartTime; set => base.StartTime = value; }
+        public override DateTime StartTime
+        {
+            get { return base.StartTime; }
+            set { base.StartTime = value; }
+        }
     }
 }
