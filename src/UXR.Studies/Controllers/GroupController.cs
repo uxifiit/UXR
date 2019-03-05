@@ -159,8 +159,6 @@ namespace UXR.Studies.Controllers
         }
 
 
-       
-
         [HttpGet]
         [Route(Routes.Group.ACTION_DELETE)]
         public ActionResult Delete(int groupId)
@@ -170,7 +168,7 @@ namespace UXR.Studies.Controllers
                                  .SingleOrDefault();
             if (group != null)
             {
-                return View(Mapper.Map<DeleteGroupViewModel>(group));    // TODO
+                return View(Mapper.Map<DeleteGroupViewModel>(group));
             }
 
             return HttpNotFound();

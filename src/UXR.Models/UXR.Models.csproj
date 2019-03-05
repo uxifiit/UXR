@@ -87,8 +87,10 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Queries\ApplicationUserQueries.cs" />
+    <Compile Include="Queries\IdentityRoleQueries.cs" />
     <Compile Include="RecreateDatabaseInitializer.cs" />
-    <Compile Include="Roles.cs" />
+    <Compile Include="UserRoles.cs" />
     <Compile Include="UXRDbContext.cs" />
   </ItemGroup>
   <ItemGroup>

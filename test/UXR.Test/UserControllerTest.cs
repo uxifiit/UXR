@@ -41,14 +41,14 @@ namespace UXR.Test
             Id = NEW_USER1_NAME
         };
 
-        private const string NEW_USER2_NAME = "newuser1@email.com";
+        private const string NEW_USER2_NAME = "newuser2@email.com";
         private ApplicationUser _newUser2 = new ApplicationUser()
         {
             UserName = NEW_USER2_NAME,
             Email = NEW_USER2_NAME
         };
 
-        private const string NEW_USER3_NAME = "newuser1@email.com";
+        private const string NEW_USER3_NAME = "newuser3@email.com";
         private ApplicationUser _newUser3 = new ApplicationUser()
         {
             UserName = NEW_USER3_NAME,
@@ -79,6 +79,7 @@ namespace UXR.Test
             Id = SUPERADMIN_USER_NAME
         };
 
+
         [TestInitialize]
         public void Initialize()
         {
@@ -92,13 +93,13 @@ namespace UXR.Test
             _superadminUser.Roles.Add(new IdentityUserRole() { RoleId = _roles[2].Id, UserId = _superadminUser.Id });
         }
 
+
         private UserController PrepareController(List<ApplicationUser> users, ApplicationUserManager userManager)
         {
             var dbContext = new Mock<IIdentityDbContext<ApplicationUser>>();
 
             var rolesSet = Testing.Mocks.GetQueryableMockedDbSet<IdentityRole>(_roles);
-            var usersSet = Testing.Mocks.GetQueryableMockedDbSet<ApplicationUser>(
-                users);
+            var usersSet = Testing.Mocks.GetQueryableMockedDbSet<ApplicationUser>(users);
             dbContext.Setup(m => m.Roles).Returns(() => rolesSet);
             dbContext.Setup(m => m.Users).Returns(() => usersSet);
 
@@ -107,9 +108,11 @@ namespace UXR.Test
             return new UserController(database, userManager);
         }
 
+
         private ApplicationUserManager BaseUserManager()
         {
             var userStore = new Mock<IUserStore<ApplicationUser>>();
+
             return new ApplicationUserManager(userStore.Object);
         }
 
@@ -122,15 +125,18 @@ namespace UXR.Test
             Assert.IsNotNull(result);
         }
 
+
         [TestMethod]
         public void Test_Index_NoUsersExistEmptyList()
         {
             var controller = PrepareController(new List<ApplicationUser>(), BaseUserManager());
             var result = controller.Index() as ViewResult;
-            ManageUsersListViewModel manageUsersListViewModel = result.Model as ManageUsersListViewModel;
+            var manageUsers = result?.Model as IEnumerable<ManageUserViewModel>;
 
-            Assert.IsTrue(manageUsersListViewModel.Users.Count == 0);
+            Assert.IsNotNull(manageUsers);
+            Assert.AreEqual(0, manageUsers.Count());
         }
+
 
         [TestMethod]
         public void Test_Index_ReturnsNewUser()
@@ -138,11 +144,13 @@ namespace UXR.Test
             var controller = PrepareController(new List<ApplicationUser>() { _newUser1 },
                 BaseUserManager());
             var result = controller.Index() as ViewResult;
-            ManageUsersListViewModel manageUsersListViewModel = result.Model as ManageUsersListViewModel;
+            var manageUsers = result?.Model as IEnumerable<ManageUserViewModel>;
 
-            Assert.IsTrue(manageUsersListViewModel.Users.Count == 1 
-                && manageUsersListViewModel.Users[0].Username == NEW_USER1_NAME);
+            Assert.IsNotNull(manageUsers);
+            Assert.AreEqual(1, manageUsers.Count());
+            Assert.AreEqual(NEW_USER1_NAME, manageUsers.First().UserName);
         }
+
 
         [TestMethod]
         public void Test_Index_ReturnsApprovedUser()
@@ -150,12 +158,13 @@ namespace UXR.Test
             var controller = PrepareController(new List<ApplicationUser>() { _approvedUser },
                 BaseUserManager());
             var result = controller.Index() as ViewResult;
-            ManageUsersListViewModel manageUsersListViewModel = result.Model as ManageUsersListViewModel;
+            var manageUsers = result?.Model as IEnumerable<ManageUserViewModel>;
 
-            Assert.IsTrue(manageUsersListViewModel.Users.Count == 1
-                && manageUsersListViewModel.Users[0].Username == APPROVED_USER_NAME
-                && manageUsersListViewModel.Users[0].Approved);
+            Assert.IsNotNull(manageUsers);
+            Assert.AreEqual(1, manageUsers.Count());
+            Assert.IsTrue(manageUsers.First().IsApproved);
         }
+
 
         [TestMethod]
         public void Test_Index_ReturnsAdminUser()
@@ -163,13 +172,15 @@ namespace UXR.Test
             var controller = PrepareController(new List<ApplicationUser>() { _adminUser },
                 BaseUserManager());
             var result = controller.Index() as ViewResult;
-            ManageUsersListViewModel manageUsersListViewModel = result.Model as ManageUsersListViewModel;
+            var manageUsers = result?.Model as IEnumerable<ManageUserViewModel>;
 
-            Assert.IsTrue(manageUsersListViewModel.Users.Count == 1
-                && manageUsersListViewModel.Users[0].Username == ADMIN_USER_NAME
-                && manageUsersListViewModel.Users[0].Approved
-                && manageUsersListViewModel.Users[0].IsAdmin);
+            Assert.IsNotNull(manageUsers);
+            Assert.AreEqual(1, manageUsers.Count());
+            Assert.AreEqual(ADMIN_USER_NAME, manageUsers.First().UserName);
+            Assert.IsTrue(manageUsers.First().IsApproved);
+            Assert.IsTrue(manageUsers.First().IsAdmin);
         }
+
 
         [TestMethod]
         public void Test_Index_ReturnsMultipleNewUsers()
@@ -177,36 +188,48 @@ namespace UXR.Test
             var controller = PrepareController(new List<ApplicationUser>() { _newUser1, _newUser2, _newUser3 },
                 BaseUserManager());
             var result = controller.Index() as ViewResult;
-            ManageUsersListViewModel manageUsersListViewModel = result.Model as ManageUsersListViewModel;
+            var manageUsers = result?.Model as IEnumerable<ManageUserViewModel>;
 
-            Assert.IsTrue(manageUsersListViewModel.Users.Count == 3
-                && manageUsersListViewModel.Users[0].Username == NEW_USER1_NAME
-                && manageUsersListViewModel.Users[1].Username == NEW_USER2_NAME
-                && manageUsersListViewModel.Users[2].Username == NEW_USER3_NAME);
+            Assert.IsNotNull(manageUsers);
+            Assert.AreEqual(3, manageUsers.Count());
+            Assert.AreEqual(NEW_USER1_NAME, manageUsers.First().UserName);
+            Assert.AreEqual(NEW_USER2_NAME, manageUsers.Skip(1).First().UserName);
+            Assert.AreEqual(NEW_USER3_NAME, manageUsers.Skip(2).First().UserName);
         }
 
         [TestMethod]
-        public void Test_Index_ReturnsMultipleDifferentUsers()
+        public void Test_Index_ReturnsMultipleDifferentUsersWithoutSuperAdmin()
         {
-            var controller = PrepareController(new List<ApplicationUser>() { _newUser1, _newUser2,
-                _newUser3, _approvedUser, _adminUser, _superadminUser },
-                BaseUserManager());
+            var controller = PrepareController(
+                new List<ApplicationUser>()
+                {
+                    _newUser1,
+                    _newUser2,
+                    _newUser3,
+                    _approvedUser,
+                    _adminUser,
+                    _superadminUser
+                },
+                BaseUserManager()
+            );
             var result = controller.Index() as ViewResult;
-            ManageUsersListViewModel manageUsersListViewModel = result.Model as ManageUsersListViewModel;
+            var manageUsers = result?.Model as IEnumerable<ManageUserViewModel>;
 
-            Assert.IsTrue(manageUsersListViewModel.Users.Count == 6
-                && manageUsersListViewModel.Users[0].Username == NEW_USER1_NAME
-                && manageUsersListViewModel.Users[1].Username == NEW_USER2_NAME
-                && manageUsersListViewModel.Users[2].Username == NEW_USER3_NAME
-                && manageUsersListViewModel.Users[3].Username == APPROVED_USER_NAME
-                && manageUsersListViewModel.Users[3].Approved
-                && manageUsersListViewModel.Users[4].Username == ADMIN_USER_NAME
-                && manageUsersListViewModel.Users[4].Approved
-                && manageUsersListViewModel.Users[4].IsAdmin
-                && manageUsersListViewModel.Users[5].Username == SUPERADMIN_USER_NAME
-                && manageUsersListViewModel.Users[5].Approved
-                && manageUsersListViewModel.Users[5].IsAdmin);
+            Assert.IsNotNull(manageUsers);
+            Assert.AreEqual(5, manageUsers.Count());
+
+            Assert.AreEqual(ADMIN_USER_NAME, manageUsers.Skip(0).First().UserName);
+            Assert.IsTrue(manageUsers.Skip(0).First().IsApproved);
+            Assert.IsTrue(manageUsers.Skip(0).First().IsAdmin);
+
+            Assert.AreEqual(APPROVED_USER_NAME, manageUsers.Skip(1).First().UserName);
+            Assert.IsTrue(manageUsers.Skip(1).First().IsApproved);
+
+            Assert.AreEqual(NEW_USER1_NAME, manageUsers.Skip(2).First().UserName);
+            Assert.AreEqual(NEW_USER2_NAME, manageUsers.Skip(3).First().UserName);
+            Assert.AreEqual(NEW_USER3_NAME, manageUsers.Skip(4).First().UserName);
         }
+
 
         private const string APP_URL = @"http://www.site.com";
         private const string FAKE_APP_URL = @"http://www.fakesite.com";
@@ -231,28 +254,29 @@ namespace UXR.Test
 
             context.Setup(t => t.User).Returns(principal);
 
-            controller.ControllerContext = new ControllerContext(context.Object,
-                new RouteData(), controller);
+            controller.ControllerContext = new ControllerContext
+                (
+                    context.Object,
+                    new RouteData(), 
+                    controller
+                );
         }
+
 
         [TestMethod]
         public void Test_Index_UpdateUsersInvalidReferrer()
         {
-            var controller = PrepareController(new List<ApplicationUser>(),
-                BaseUserManager());
+            var controller = PrepareController(new List<ApplicationUser>(), BaseUserManager());
 
             SetControllerContext(controller, false, new string[] { ADMIN_ROLE_NAME});
 
-
-            var usersViewModel = new ManageUsersListViewModel()
-            {
-                Users = new List<ManageUserViewModel>()
-            };
+            var usersViewModel = new List<ManageUserViewModel>();
 
             var result = controller.Index(usersViewModel);
 
-
-            Assert.IsTrue(result.Exception.InnerExceptions.Count == 1 && result.Exception.InnerException is UnauthorizedAccessException);
+            Assert.IsNotNull(result.Exception);
+            Assert.AreEqual(1, result.Exception.InnerExceptions.Count);
+            Assert.IsTrue(result.Exception.InnerException is UnauthorizedAccessException);
         }
 
 
@@ -262,7 +286,7 @@ namespace UXR.Test
             var userStore = new Mock<IUserStore<ApplicationUser>>();
             var userManager = new Mock<ApplicationUserManager>(userStore.Object);
             userManager.Setup(um => um.AddToRoleAsync(It.IsAny<string>(), It.IsAny<string>()))
-                .ReturnsAsync(IdentityResult.Success);
+                       .ReturnsAsync(IdentityResult.Success);
 
             var controller = PrepareController(new List<ApplicationUser>() { _newUser1 },
                 userManager.Object);
@@ -270,17 +294,14 @@ namespace UXR.Test
             SetControllerContext(controller, true, null);
 
 
-            var usersViewModel = new ManageUsersListViewModel()
+            var usersViewModel = new List<ManageUserViewModel>()
             {
-                Users = new List<ManageUserViewModel>()
+                new ManageUserViewModel()
                 {
-                    new ManageUserViewModel()
-                    {
-                        Id = _newUser1.Id,
-                        Username = _newUser1.UserName,
-                        Approved = true,
-                        IsAdmin = false
-                    }
+                    Id = _newUser1.Id,
+                    UserName = _newUser1.UserName,
+                    IsApproved = true,
+                    IsAdmin = false
                 }
             };
 
@@ -290,13 +311,14 @@ namespace UXR.Test
                 It.Is<string>(role => role == APPROVED_ROLE_NAME)), Times.Once);
         }
 
+
         [TestMethod]
         public void Test_Index_PromotesToAdmin()
         {
             var userStore = new Mock<IUserStore<ApplicationUser>>();
             var userManager = new Mock<ApplicationUserManager>(userStore.Object);
             userManager.Setup(um => um.AddToRoleAsync(It.IsAny<string>(), It.IsAny<string>()))
-                .ReturnsAsync(IdentityResult.Success);
+                       .ReturnsAsync(IdentityResult.Success);
 
             var controller = PrepareController(new List<ApplicationUser>() { _approvedUser },
                 userManager.Object);
@@ -304,17 +326,14 @@ namespace UXR.Test
             SetControllerContext(controller, true, new string[] { SUPERADMIN_ROLE_NAME });
 
 
-            var usersViewModel = new ManageUsersListViewModel()
+            var usersViewModel = new List<ManageUserViewModel>()
             {
-                Users = new List<ManageUserViewModel>()
+                new ManageUserViewModel()
                 {
-                    new ManageUserViewModel()
-                    {
-                        Id = _approvedUser.Id,
-                        Username = _approvedUser.UserName,
-                        Approved = true,
-                        IsAdmin = true
-                    }
+                    Id = _approvedUser.Id,
+                    UserName = _approvedUser.UserName,
+                    IsApproved = true,
+                    IsAdmin = true
                 }
             };
 
@@ -324,13 +343,14 @@ namespace UXR.Test
                 It.Is<string>(role => role == ADMIN_ROLE_NAME)), Times.Once);
         }
 
+
         [TestMethod]
         public void Test_Index_DemotesFromAdmin()
         {
             var userStore = new Mock<IUserStore<ApplicationUser>>();
             var userManager = new Mock<ApplicationUserManager>(userStore.Object);
             userManager.Setup(um => um.RemoveFromRoleAsync(It.IsAny<string>(), It.IsAny<string>()))
-                .ReturnsAsync(IdentityResult.Success);
+                       .ReturnsAsync(IdentityResult.Success);
 
             var controller = PrepareController(new List<ApplicationUser>() { _adminUser },
                 userManager.Object);
@@ -338,17 +358,14 @@ namespace UXR.Test
             SetControllerContext(controller, true, new string[] { SUPERADMIN_ROLE_NAME });
 
 
-            var usersViewModel = new ManageUsersListViewModel()
+            var usersViewModel = new List<ManageUserViewModel>()
             {
-                Users = new List<ManageUserViewModel>()
+                new ManageUserViewModel()
                 {
-                    new ManageUserViewModel()
-                    {
-                        Id = _adminUser.Id,
-                        Username = _adminUser.UserName,
-                        Approved = true,
-                        IsAdmin = false
-                    }
+                    Id = _adminUser.Id,
+                    UserName = _adminUser.UserName,
+                    IsApproved = true,
+                    IsAdmin = false
                 }
             };
 
@@ -358,13 +375,14 @@ namespace UXR.Test
                 It.Is<string>(role => role == ADMIN_ROLE_NAME)), Times.Once);
         }
 
+
         [TestMethod]
-        public void Test_Index_WontDemoteSuperadmin()
+        public void Test_Index_WillNotDemoteSuperadmin()
         {
             var userStore = new Mock<IUserStore<ApplicationUser>>();
             var userManager = new Mock<ApplicationUserManager>(userStore.Object);
             userManager.Setup(um => um.RemoveFromRoleAsync(It.IsAny<string>(), It.IsAny<string>()))
-                .ReturnsAsync(IdentityResult.Success);
+                       .ReturnsAsync(IdentityResult.Success);
 
             var controller = PrepareController(new List<ApplicationUser>() { _superadminUser },
                 userManager.Object);
@@ -372,17 +390,14 @@ namespace UXR.Test
             SetControllerContext(controller, true, new string[] { SUPERADMIN_ROLE_NAME });
 
 
-            var usersViewModel = new ManageUsersListViewModel()
+            var usersViewModel = new List<ManageUserViewModel>()
             {
-                Users = new List<ManageUserViewModel>()
+                new ManageUserViewModel()
                 {
-                    new ManageUserViewModel()
-                    {
-                        Id = _superadminUser.Id,
-                        Username = _superadminUser.UserName,
-                        Approved = true,
-                        IsAdmin = false
-                    }
+                    Id = _superadminUser.Id,
+                    UserName = _superadminUser.UserName,
+                    IsApproved = true,
+                    IsAdmin = false
                 }
             };
 

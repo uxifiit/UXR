@@ -24,8 +24,12 @@ namespace UXR
         public async Task SendAsync(IdentityMessage message)
         {
             // Plug in your email service here to send an email.
-            string text = String.Format("Please click on this link to {0}: {1}", message.Subject.ToLower(), message.Body);
-            string html = String.Format("Please click on this link to {0}: <a href=\"{1}\">link</a><br/><br/>Or copy and open the following link in the browser:<br/>{1}", message.Subject.ToLower(), message.Body);
+            string text = String.IsNullOrWhiteSpace(message.Body)
+                        ? message.Subject
+                        : String.Format("Please click on this link to {0}: {1}", message.Subject.ToLower(), message.Body);
+            string html = String.IsNullOrWhiteSpace(message.Body)
+                        ? message.Subject
+                        : String.Format("Please click on this link to {0}: <a href=\"{1}\">link</a><br/><br/>Or copy and open the following link in the browser:<br/>{1}", message.Subject.ToLower(), message.Body);
 
             using (var client = new SmtpClient())
             using (var mail = new MailMessage())

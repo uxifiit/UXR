@@ -1,4 +1,5 @@
-﻿@model UXR.ViewModels.ManageUsersListViewModel
+﻿@model List<UXR.ViewModels.ManageUserViewModel>
+@using UXR.Controllers;
 
 @{
     ViewBag.Title = "Manage users";
@@ -19,44 +20,46 @@
                 <table class="table">
                     <tr>
                         <th>
-                            @Html.DisplayNameFor(model => model.Users.FirstOrDefault().Username)
+                            @Html.DisplayNameFor(model => model.FirstOrDefault().UserName)
                         </th>
                         @if (User.IsInRole(UXR.Models.UserRoles.SUPERADMIN))
                         {
                             <th>
-                                @Html.DisplayNameFor(model => model.Users.FirstOrDefault().IsAdmin)
+                                @Html.DisplayNameFor(model => model.FirstOrDefault().IsAdmin)
                             </th>
                         }
                         <th>
-                            @Html.DisplayNameFor(model => model.Users.FirstOrDefault().IsConfirmed)
+                            @Html.DisplayNameFor(model => model.FirstOrDefault().IsConfirmed)
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.Users.FirstOrDefault().Approved)
+                            @Html.DisplayNameFor(model => model.FirstOrDefault().IsApproved)
                         </th>
                     </tr>
 
-                    @for (int i = 0; i < Model.Users.Count; i++)
+                    @for (int i = 0; i < Model.Count; i++)
                     {
                     <tr>
                         <td>
-                            @Html.DisplayFor(model => Model.Users[i].Username)
-                            @Html.HiddenFor(model => Model.Users[i].Username)
-                            @Html.HiddenFor(model => Model.Users[i].Id)
+                            @Html.DisplayFor(model => Model[i].UserName)
+                            @Html.HiddenFor(model => Model[i].UserName)
+                            @Html.HiddenFor(model => Model[i].Id)
                         </td>
                         @if (User.IsInRole(UXR.Models.UserRoles.SUPERADMIN))
                         {
                             <td>
-                                @Html.CheckBoxFor(model => Model.Users[i].IsAdmin)
+                                @Html.CheckBoxFor(model => Model[i].IsAdmin)
                             </td>
                         }
                         <td>
-                            @Html.CheckBoxFor(model => Model.Users[i].IsConfirmed)
+                            @Html.CheckBoxFor(model => Model[i].IsConfirmed)
                         </td>
                         <td>
-                            @if (!Model.Users[i].Approved)
-                            {
-                                @Html.CheckBoxFor(model => Model.Users[i].Approved)
-                            }
+                        @if (Model[i].IsApproved == false)
+                        {
+                            @Html.CheckBoxFor(model => Model[i].IsApproved)
+                            @:&nbsp;
+                            @Html.ActionLink($"Approve", nameof(UserController.Approve), UserController.ControllerName, new { userId = Model[i].Id }, new { @class = $"btn btn-primary btn-sm" })
+                        }
                         </td>
                     </tr>
                     }
