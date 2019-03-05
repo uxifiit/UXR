@@ -73,10 +73,11 @@ namespace UXR.Controllers
         {
             var approvedRole = GetApprovedRole();
             var adminRole = GetAdminRole();
+            var superAdminRole = GetSuperAdminRole();
 
             var users = _database.Users
                                  .OrderBy(u => u.Email)
-                                 .AsDbQuery()
+                                 .Where(u => u.Roles.Any(r => r.RoleId == superAdminRole.Id) == false)
                                  .ToList();
                  
             return View(MapUsers(users, approvedRole, adminRole).ToList());
@@ -91,14 +92,15 @@ namespace UXR.Controllers
         {
             Request.ThrowIfDifferentReferrer();
 
+            var superAdminRole = GetSuperAdminRole();
+
+            var userIds = updates.Select(u => u.Id).ToList();
             var users = _database.Users
-                                 .AsDbQuery()
+                                 .Where(u => userIds.Contains(u.Id))
+                                 .Where(u => u.Roles.Any(r => r.RoleId == superAdminRole.Id) == false)
                                  .ToList();
 
             bool isCurrentUserSuperAdmin = User.IsInRole(UserRoles.SUPERADMIN);
-            var superAdminRole = isCurrentUserSuperAdmin 
-                               ? GetSuperAdminRole() 
-                               : null;
 
             foreach (var update in updates)
             {
@@ -118,20 +120,24 @@ namespace UXR.Controllers
         }
 
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpGet]
         public async Task<ActionResult> Approve(string userId)
         {
             Request.ThrowIfDifferentReferrer();
 
-            var user = _database.Users.FilterById(userId).SingleOrDefault();
-
-            if (user != null)
+            if (User.IsInRole(UserRoles.ADMIN))
             {
-                await ApproveUserAsync(user);
+                var user = _database.Users.FilterById(userId).SingleOrDefault();
+
+                if (user != null)
+                {
+                    await ApproveUserAsync(user);
+                }
+
+                return RedirectToAction(nameof(Index));
             }
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(HomeController.Index), HomeController.ControllerName);
         }
 
 
@@ -143,7 +149,9 @@ namespace UXR.Controllers
                 await _userManager.ConfirmEmailAsync(user.Id, code);
             }
 
-            if (update.IsApproved)
+
+            bool isApproved = await _userManager.IsInRoleAsync(user.Id, UserRoles.APPROVED);
+            if (update.IsApproved && isApproved == false)
             {
                 await ApproveUserAsync(user);
             }
@@ -154,7 +162,7 @@ namespace UXR.Controllers
         {
             var approval = await _userManager.AddToRoleAsync(user.Id, UserRoles.APPROVED);
 
-            if (approval.Succeeded)
+            if (approval != null && approval.Succeeded)
             {
                 await _userManager.SendEmailAsync(user.Email, "Your account was approved", "");
             }

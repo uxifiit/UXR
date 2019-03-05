@@ -41,14 +41,14 @@ namespace UXR.Test
             Id = NEW_USER1_NAME
         };
 
-        private const string NEW_USER2_NAME = "newuser1@email.com";
+        private const string NEW_USER2_NAME = "newuser2@email.com";
         private ApplicationUser _newUser2 = new ApplicationUser()
         {
             UserName = NEW_USER2_NAME,
             Email = NEW_USER2_NAME
         };
 
-        private const string NEW_USER3_NAME = "newuser1@email.com";
+        private const string NEW_USER3_NAME = "newuser3@email.com";
         private ApplicationUser _newUser3 = new ApplicationUser()
         {
             UserName = NEW_USER3_NAME,
@@ -99,8 +99,7 @@ namespace UXR.Test
             var dbContext = new Mock<IIdentityDbContext<ApplicationUser>>();
 
             var rolesSet = Testing.Mocks.GetQueryableMockedDbSet<IdentityRole>(_roles);
-            var usersSet = Testing.Mocks.GetQueryableMockedDbSet<ApplicationUser>(
-                users);
+            var usersSet = Testing.Mocks.GetQueryableMockedDbSet<ApplicationUser>(users);
             dbContext.Setup(m => m.Roles).Returns(() => rolesSet);
             dbContext.Setup(m => m.Users).Returns(() => usersSet);
 
@@ -193,13 +192,13 @@ namespace UXR.Test
 
             Assert.IsNotNull(manageUsers);
             Assert.AreEqual(3, manageUsers.Count());
-            Assert.AreEqual(NEW_USER1_NAME, manageUsers.First());
-            Assert.AreEqual(NEW_USER2_NAME, manageUsers.Skip(1).First());
-            Assert.AreEqual(NEW_USER3_NAME, manageUsers.Skip(2).First());
+            Assert.AreEqual(NEW_USER1_NAME, manageUsers.First().UserName);
+            Assert.AreEqual(NEW_USER2_NAME, manageUsers.Skip(1).First().UserName);
+            Assert.AreEqual(NEW_USER3_NAME, manageUsers.Skip(2).First().UserName);
         }
 
         [TestMethod]
-        public void Test_Index_ReturnsMultipleDifferentUsers()
+        public void Test_Index_ReturnsMultipleDifferentUsersWithoutSuperAdmin()
         {
             var controller = PrepareController(
                 new List<ApplicationUser>()
@@ -217,18 +216,18 @@ namespace UXR.Test
             var manageUsers = result?.Model as IEnumerable<ManageUserViewModel>;
 
             Assert.IsNotNull(manageUsers);
-            Assert.AreEqual(6, manageUsers.Count());
-            Assert.AreEqual(NEW_USER1_NAME, manageUsers.Skip(0).First().UserName);
-            Assert.AreEqual(NEW_USER2_NAME, manageUsers.Skip(1).First().UserName);
-            Assert.AreEqual(NEW_USER3_NAME, manageUsers.Skip(2).First().UserName);
-            Assert.AreEqual(APPROVED_USER_NAME, manageUsers.Skip(3).First().UserName);
-            Assert.IsTrue(manageUsers.Skip(3).First().IsApproved);
-            Assert.AreEqual(ADMIN_USER_NAME, manageUsers.Skip(4).First().UserName);
-            Assert.IsTrue(manageUsers.Skip(4).First().IsApproved);
-            Assert.IsTrue(manageUsers.Skip(4).First().IsAdmin);
-            Assert.AreEqual(SUPERADMIN_USER_NAME, manageUsers.Skip(5).First().UserName);
-            Assert.IsTrue(manageUsers.Skip(5).First().IsApproved);
-            Assert.IsTrue(manageUsers.Skip(5).First().IsAdmin);
+            Assert.AreEqual(5, manageUsers.Count());
+
+            Assert.AreEqual(ADMIN_USER_NAME, manageUsers.Skip(0).First().UserName);
+            Assert.IsTrue(manageUsers.Skip(0).First().IsApproved);
+            Assert.IsTrue(manageUsers.Skip(0).First().IsAdmin);
+
+            Assert.AreEqual(APPROVED_USER_NAME, manageUsers.Skip(1).First().UserName);
+            Assert.IsTrue(manageUsers.Skip(1).First().IsApproved);
+
+            Assert.AreEqual(NEW_USER1_NAME, manageUsers.Skip(2).First().UserName);
+            Assert.AreEqual(NEW_USER2_NAME, manageUsers.Skip(3).First().UserName);
+            Assert.AreEqual(NEW_USER3_NAME, manageUsers.Skip(4).First().UserName);
         }
 
 

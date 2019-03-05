@@ -57,7 +57,7 @@
                         @if (Model[i].IsApproved == false)
                         {
                             @Html.CheckBoxFor(model => Model[i].IsApproved)
-
+                            @:&nbsp;
                             @Html.ActionLink($"Approve", nameof(UserController.Approve), UserController.ControllerName, new { userId = Model[i].Id }, new { @class = $"btn btn-primary btn-sm" })
                         }
                         </td>

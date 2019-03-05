@@ -154,7 +154,7 @@ namespace UXR.Studies.Controllers
 
             var node = _database.Nodes
                                 .SingleOrDefault(n => n.GroupId == groupId
-                                                   && n.Id == nodeId);
+                                                      && n.Id == nodeId);
 
             if (node != null)
             {
@@ -164,10 +164,11 @@ namespace UXR.Studies.Controllers
                 };
 
                 _dispatcher.Dispatch(command);
+
                 return RedirectToAction(nameof(Index));
             }
+
             return HttpNotFound();
         }
-
     }
 }
