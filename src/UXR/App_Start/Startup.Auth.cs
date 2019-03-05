@@ -21,6 +21,7 @@ using UXR.Models.Entities;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Owin.Security;
 using System.Data.Entity;
+using Microsoft.Owin.Security.DataProtection;
 
 [assembly: OwinStartup(typeof(UXR.Startup))]
 
@@ -29,28 +30,15 @@ namespace UXR
     public partial class Startup
     {
         /// <summary>  
-        /// Ninject kernel for injection.  
+        /// Ninject kernel for dependency injection.  
         /// </summary>  
         private IKernel kernel = null;
 
         // For more information on configuring authentication, please visit http://go.microsoft.com/fwlink/?LinkId=301864
         public void ConfigureAuth(IAppBuilder app)
         {
-            // Configure the db context, user manager and signin manager to use a single instance per request
-            /*
-            app.CreatePerOwinContext(UXRDbContext.Create);
-            app.CreatePerOwinContext<ApplicationUserManager>(ApplicationUserManager.Create);
-            app.CreatePerOwinContext<ApplicationSignInManager>(ApplicationSignInManager.Create); 
-            */
             kernel = CreateKernel();
             app.UseNinjectMiddleware(() => kernel);
-
-            /*
-            app.CreatePerOwinContext<ApplicationUserManager>((options, context) =>
-            {
-                var userStore = kernel.Get<IUserStore<MyUserDomain>>();
-                return ApplicationUserManager.Create(options, userStore, setting.UserPolicy);
-            });*/
 
             // Enable the application to use a cookie to store information for the signed in user
             // and to use a cookie to temporarily store information about a user logging in with a third party login provider
@@ -68,34 +56,15 @@ namespace UXR
                         regenerateIdentity: (manager, user) => user.GenerateUserIdentityAsync(manager))
                 }
             });            
-            app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
+            //app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
 
             // Enables the application to temporarily store user information when they are verifying the second factor in the two-factor authentication process.
-            app.UseTwoFactorSignInCookie(DefaultAuthenticationTypes.TwoFactorCookie, TimeSpan.FromMinutes(5));
+            //app.UseTwoFactorSignInCookie(DefaultAuthenticationTypes.TwoFactorCookie, TimeSpan.FromMinutes(5));
 
             // Enables the application to remember the second login verification factor such as phone or email.
             // Once you check this option, your second step of verification during the login process will be remembered on the device where you logged in from.
             // This is similar to the RememberMe option when you log in.
-            app.UseTwoFactorRememberBrowserCookie(DefaultAuthenticationTypes.TwoFactorRememberBrowserCookie);
-
-            // Uncomment the following lines to enable logging in with third party login providers
-            //app.UseMicrosoftAccountAuthentication(
-            //    clientId: "",
-            //    clientSecret: "");
-
-            //app.UseTwitterAuthentication(
-            //   consumerKey: "",
-            //   consumerSecret: "");
-
-            //app.UseFacebookAuthentication(
-            //   appId: "",
-            //   appSecret: "");
-
-            //app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
-            //{
-            //    ClientId = "",
-            //    ClientSecret = ""
-            //});
+            //app.UseTwoFactorRememberBrowserCookie(DefaultAuthenticationTypes.TwoFactorRememberBrowserCookie);
         }
 
         /// <summary>
@@ -112,7 +81,7 @@ namespace UXR
 
                 var resolver = new Common.NinjectDependencyResolver(kernel);
                 System.Web.Mvc.DependencyResolver.SetResolver(resolver); // MVC
-                // Install our Ninject-based IDependencyResolver into the Web API config
+                // Set the Ninject-based IDependencyResolver into the Web API config
                 GlobalConfiguration.Configuration.DependencyResolver = resolver;
 
 
@@ -127,32 +96,33 @@ namespace UXR
         }
 
         /// <summary>
-        /// Load your modules or register your services here!
+        /// Loads modules and registers services for the application. If a new module is added, this method should be updated.
         /// </summary>
         /// <param name="kernel">The kernel.</param>
         private static void RegisterServices(IKernel kernel)
         {
             kernel.Bind<ITimeProvider>().To<TimeProvider>().InRequestScope();
 
-            //string packagePath = HostingEnvironment.MapPath(PackageStoreConstants.PACKAGE_PATH);
-
             kernel.Bind<IStudiesDbContext, IIdentityDbContext<ApplicationUser>, DbContext>()
-                  .To<UXRDbContext>().InRequestScope();
+                  .To<UXRDbContext>()
+                  .InRequestScope();
 
-            kernel.Bind<ICommandHandlerResolver>().To<NinjectCommandHandlerResolver>().InSingletonScope();
+            kernel.Bind<ICommandHandlerResolver>()
+                  .To<NinjectCommandHandlerResolver>()
+                  .InSingletonScope();
 
             kernel.Bind<IUserStore<ApplicationUser>>().ToMethod((context) =>
             {
                 return new UserStore<ApplicationUser>(kernel.Get<DbContext>());
-            })
-            .InRequestScope();
+            }).InRequestScope();
 
             kernel.Bind<ApplicationUserManager>().ToMethod((context) =>
             {
-                var ifc = context.Kernel.Get<IdentityFactoryOptions<ApplicationUserManager>>(); 
-                ifc.DataProtectionProvider = ifc.DataProtectionProvider ?? new Microsoft.Owin.Security.DataProtection.DpapiDataProtectionProvider("UXR");
+                var options = context.Kernel.Get<IdentityFactoryOptions<ApplicationUserManager>>(); 
+                options.DataProtectionProvider = options.DataProtectionProvider 
+                                                 ?? new DpapiDataProtectionProvider("UXR");
                 var userStore = context.Kernel.Get<IUserStore<ApplicationUser>>();
-                return ApplicationUserManager.Create(ifc, userStore);
+                return ApplicationUserManager.Create(options, userStore);
             }).InRequestScope();
 
             kernel.Bind<IAuthenticationManager>().ToMethod(context =>
@@ -163,10 +133,10 @@ namespace UXR
 
             kernel.Bind<ApplicationSignInManager>().ToMethod((context) =>
             {
-                var ifc = context.Kernel.Get<IdentityFactoryOptions<ApplicationSignInManager>>();
+                var options = context.Kernel.Get<IdentityFactoryOptions<ApplicationSignInManager>>();
                 var userManager = context.Kernel.Get<ApplicationUserManager>();
                 var authenticatioManager = context.Kernel.Get<IAuthenticationManager>();
-                return ApplicationSignInManager.Create(ifc, userManager, authenticatioManager);
+                return ApplicationSignInManager.Create(options, userManager, authenticatioManager);
             }).InRequestScope();
 
             kernel.Bind<CommandDispatcher>().ToSelf().InSingletonScope();
@@ -174,6 +144,7 @@ namespace UXR
             kernel.Load
             (
                 new UXR.Modules.IdentityDbModule(),
+
                 new UXR.Studies.Modules.StudiesDbModule(),
                 new UXR.Studies.Modules.CommandHandlersModule(),
                 new UXR.Studies.Modules.FilesModule()

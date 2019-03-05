@@ -20,41 +20,20 @@ namespace UXR.Controllers
     [Authorize]
     public class AccountController : Controller
     {
-        private ApplicationSignInManager _signInManager;
-        private ApplicationUserManager _userManager;
-        private IdentityDatabase _database;
+        public static readonly string ControllerName = nameof(AccountController).Replace("Controller", "");
 
         private const string invalidEmailMessage = "Invalid e-mail address";
+
+        private readonly ApplicationSignInManager _signInManager;
+        private readonly ApplicationUserManager _userManager;
+        private readonly IdentityDatabase _database;
+
 
         public AccountController(IdentityDatabase database, ApplicationUserManager userManager, ApplicationSignInManager signInManager )
         {
             _database = database;
-            UserManager = userManager;
-            SignInManager = signInManager;
-        }
-
-        public ApplicationSignInManager SignInManager
-        {
-            get
-            {
-                return _signInManager;
-            }
-            private set 
-            { 
-                _signInManager = value; 
-            }
-        }
-
-        public ApplicationUserManager UserManager
-        {
-            get
-            {
-                return _userManager;
-            }
-            private set
-            {
-                _userManager = value;
-            }
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
 
         //
@@ -79,10 +58,10 @@ namespace UXR.Controllers
             }
 
             // Require the user to have a confirmed email before they can log on.
-            var user = await UserManager.FindByNameAsync(model.Email);
+            var user = await _userManager.FindByNameAsync(model.Email);
             if (user != null)
             {
-                if (!await UserManager.IsEmailConfirmedAsync(user.Id))
+                if (!await _userManager.IsEmailConfirmedAsync(user.Id))
                 {
                     model.OfferResendConfirmEmail = true;
                     return View(model);
@@ -91,7 +70,7 @@ namespace UXR.Controllers
 
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
-            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -99,7 +78,7 @@ namespace UXR.Controllers
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:
-                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
+                    return RedirectToAction(nameof(SendCode), new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
                 case SignInStatus.Failure:
                 default:
                     ModelState.AddModelError("", "Invalid login attempt.");
@@ -113,7 +92,7 @@ namespace UXR.Controllers
         public async Task<ActionResult> VerifyCode(string provider, string returnUrl, bool rememberMe)
         {
             // Require that the user has already logged in via username/password or external login
-            if (!await SignInManager.HasBeenVerifiedAsync())
+            if (!await _signInManager.HasBeenVerifiedAsync())
             {
                 return View("Error");
             }
@@ -136,7 +115,7 @@ namespace UXR.Controllers
             // If a user enters incorrect codes for a specified amount of time then the user account 
             // will be locked out for a specified amount of time. 
             // You can configure the account lockout settings in IdentityConfig
-            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent:  model.RememberMe, rememberBrowser: model.RememberBrowser);
+            var result = await _signInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent:  model.RememberMe, rememberBrowser: model.RememberBrowser);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -167,17 +146,17 @@ namespace UXR.Controllers
             if (ModelState.IsValid)
             {
                 // Require the user to have a confirmed email before they can log on.
-                var user = await UserManager.FindByNameAsync(model.Email);
-                if (user != null && !await UserManager.IsEmailConfirmedAsync(user.Id))
+                var user = await _userManager.FindByNameAsync(model.Email);
+                if (user != null && !await _userManager.IsEmailConfirmedAsync(user.Id))
                 {
                     //For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                     //Send an email with this link
-                    string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    await UserManager.SendEmailAsync(user.Id, "Confirm your account", callbackUrl);
+                    string code = await _userManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                    var callbackUrl = Url.Action(nameof(ConfirmEmail), ControllerName, new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                    await _userManager.SendEmailAsync(user.Id, "Confirm your account", callbackUrl);
                 }
 
-                return RedirectToAction("Login");
+                return RedirectToAction(nameof(Login));
             }
 
             // If we got this far, something failed, redisplay form
@@ -204,18 +183,18 @@ namespace UXR.Controllers
                 && ValidateEmailAddress(nameof(RegisterViewModel.Email), model.Email))
             {
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-                var result = await UserManager.CreateAsync(user, model.Password);
+                var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
                     //await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
 
                     //For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                     //Send an email with this link
-                    string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    await UserManager.SendEmailAsync(user.Id, "Confirm your account", callbackUrl);
+                    string code = await _userManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                    var callbackUrl = Url.Action(nameof(ConfirmEmail), ControllerName, new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                    await _userManager.SendEmailAsync(user.Id, "Confirm your account", callbackUrl);
 
-                    return RedirectToAction("RegisterConfirmation");
+                    return RedirectToAction(nameof(RegisterConfirmation));
                 }
 
                 AddErrors(result);
@@ -230,7 +209,10 @@ namespace UXR.Controllers
         {
             var deploymentConfig = ((NameValueCollection)ConfigurationManager.GetSection("DeploymentConfig"));
             string setting = deploymentConfig["AllowedEmailDomains"] ?? String.Empty;
-            string[] allowedEmailDomains = setting.Split(new[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries).Select(d => d.Trim().ToLower()).ToArray();
+            string[] allowedEmailDomains = setting.Split(new[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries)
+                                                  .Select(d => d.Trim().ToLower())
+                                                  .ToArray();
+
             string domain = email.Split('@').LastOrDefault()?.Trim().ToLower();
 
             bool isValid = String.IsNullOrWhiteSpace(domain) == false
@@ -254,6 +236,7 @@ namespace UXR.Controllers
             return View();
         }
 
+
         //
         // GET: /Account/ConfirmEmail
         [AllowAnonymous]
@@ -263,11 +246,11 @@ namespace UXR.Controllers
             {
                 return View("Error");
             }
-            var result = await UserManager.ConfirmEmailAsync(userId, code);
+            var result = await _userManager.ConfirmEmailAsync(userId, code);
 
             if (result.Succeeded)
             {
-                string userEmail = UserManager.FindById(userId).Email;
+                string userEmail = _userManager.FindById(userId).Email;
 
                 var adminRole = _database.Roles.Where(r => r.Name == UserRoles.ADMIN).SingleOrDefault();
 
@@ -277,7 +260,7 @@ namespace UXR.Controllers
                     string callbackUrl = Url.Action(nameof(UserController.Index), UserController.ControllerName, null, protocol: Request.Url.Scheme);
                     foreach (var user in adminUsers)
                     {
-                        await UserManager.SendEmailAsync(user.Id, $"Approve account for {userEmail}", callbackUrl);
+                        await _userManager.SendEmailAsync(user.Id, $"Approve account for {userEmail}", callbackUrl);
                     }
                 }
             }
@@ -302,8 +285,8 @@ namespace UXR.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await UserManager.FindByNameAsync(model.Email);
-                if (user == null || !(await UserManager.IsEmailConfirmedAsync(user.Id)))
+                var user = await _userManager.FindByNameAsync(model.Email);
+                if (user == null || !(await _userManager.IsEmailConfirmedAsync(user.Id)))
                 {
                     // Don't reveal that the user does not exist or is not confirmed
                     return View("ForgotPasswordConfirmation");
@@ -313,10 +296,10 @@ namespace UXR.Controllers
                 // Send an email with this link
                 try
                 {
-                    string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
-                    var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    await UserManager.SendEmailAsync(user.Id, "Reset password", callbackUrl);
-                    return RedirectToAction("ForgotPasswordConfirmation", "Account");
+                    string code = await _userManager.GeneratePasswordResetTokenAsync(user.Id);
+                    var callbackUrl = Url.Action(nameof(ResetPassword), ControllerName, new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                    await _userManager.SendEmailAsync(user.Id, "Reset password", callbackUrl);
+                    return RedirectToAction(nameof(ForgotPasswordConfirmation), ControllerName);
                 }
                 catch (Exception ex)
                 {
@@ -356,16 +339,16 @@ namespace UXR.Controllers
             {
                 return View(model);
             }
-            var user = await UserManager.FindByNameAsync(model.Email);
+            var user = await _userManager.FindByNameAsync(model.Email);
             if (user == null)
             {
                 // Don't reveal that the user does not exist
-                return RedirectToAction("ResetPasswordConfirmation", "Account");
+                return RedirectToAction(nameof(ResetPasswordConfirmation), ControllerName);
             }
-            var result = await UserManager.ResetPasswordAsync(user.Id, model.Code, model.Password);
+            var result = await _userManager.ResetPasswordAsync(user.Id, model.Code, model.Password);
             if (result.Succeeded)
             {
-                return RedirectToAction("ResetPasswordConfirmation", "Account");
+                return RedirectToAction(nameof(ResetPasswordConfirmation), ControllerName);
             }
             AddErrors(result);
             return View();
@@ -387,7 +370,7 @@ namespace UXR.Controllers
         public ActionResult ExternalLogin(string provider, string returnUrl)
         {
             // Request a redirect to the external login provider
-            return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl }));
+            return new ChallengeResult(provider, Url.Action(nameof(ExternalLoginCallback), ControllerName, new { ReturnUrl = returnUrl }));
         }
 
         //
@@ -395,12 +378,12 @@ namespace UXR.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> SendCode(string returnUrl, bool rememberMe)
         {
-            var userId = await SignInManager.GetVerifiedUserIdAsync();
+            var userId = await _signInManager.GetVerifiedUserIdAsync();
             if (userId == null)
             {
                 return View("Error");
             }
-            var userFactors = await UserManager.GetValidTwoFactorProvidersAsync(userId);
+            var userFactors = await _userManager.GetValidTwoFactorProvidersAsync(userId);
             var factorOptions = userFactors.Select(purpose => new SelectListItem { Text = purpose, Value = purpose }).ToList();
             return View(new SendCodeViewModel { Providers = factorOptions, ReturnUrl = returnUrl, RememberMe = rememberMe });
         }
@@ -418,11 +401,11 @@ namespace UXR.Controllers
             }
 
             // Generate the token and send it
-            if (!await SignInManager.SendTwoFactorCodeAsync(model.SelectedProvider))
+            if (!await _signInManager.SendTwoFactorCodeAsync(model.SelectedProvider))
             {
                 return View("Error");
             }
-            return RedirectToAction("VerifyCode", new { Provider = model.SelectedProvider, ReturnUrl = model.ReturnUrl, RememberMe = model.RememberMe });
+            return RedirectToAction(nameof(VerifyCode), new { Provider = model.SelectedProvider, ReturnUrl = model.ReturnUrl, RememberMe = model.RememberMe });
         }
 
         //
@@ -433,11 +416,11 @@ namespace UXR.Controllers
             var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync();
             if (loginInfo == null)
             {
-                return RedirectToAction("Login");
+                return RedirectToAction(nameof(Login));
             }
 
             // Sign in the user with this external login provider if the user already has a login
-            var result = await SignInManager.ExternalSignInAsync(loginInfo, isPersistent: false);
+            var result = await _signInManager.ExternalSignInAsync(loginInfo, isPersistent: false);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -445,7 +428,7 @@ namespace UXR.Controllers
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:
-                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = false });
+                    return RedirectToAction(nameof(SendCode), new { ReturnUrl = returnUrl, RememberMe = false });
                 case SignInStatus.Failure:
                 default:
                     // If the user does not have an account, then prompt the user to create an account
@@ -464,7 +447,7 @@ namespace UXR.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Index", "Manage");
+                return RedirectToAction(nameof(HomeController.Index), ManageController.ControllerName);
             }
 
             if (ModelState.IsValid)
@@ -476,13 +459,13 @@ namespace UXR.Controllers
                     return View("ExternalLoginFailure");
                 }
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-                var result = await UserManager.CreateAsync(user);
+                var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
-                    result = await UserManager.AddLoginAsync(user.Id, info.Login);
+                    result = await _userManager.AddLoginAsync(user.Id, info.Login);
                     if (result.Succeeded)
                     {
-                        await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                        await _signInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
                         return RedirectToLocal(returnUrl);
                     }
                 }
@@ -500,7 +483,7 @@ namespace UXR.Controllers
         public ActionResult LogOff()
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction(nameof(HomeController.Index), HomeController.ControllerName);
         }
 
         //
@@ -511,25 +494,7 @@ namespace UXR.Controllers
             return View();
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                if (_userManager != null)
-                {
-                    _userManager.Dispose();
-                    _userManager = null;
-                }
-
-                if (_signInManager != null)
-                {
-                    _signInManager.Dispose();
-                    _signInManager = null;
-                }
-            }
-
-            base.Dispose(disposing);
-        }
+      
 
 #region Helpers
         // Used for XSRF protection when adding external logins
@@ -557,7 +522,7 @@ namespace UXR.Controllers
             {
                 return Redirect(returnUrl);
             }
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction(nameof(HomeController.Index), HomeController.ControllerName);
         }
 
         internal class ChallengeResult : HttpUnauthorizedResult

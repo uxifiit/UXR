@@ -151,7 +151,6 @@
     <Compile Include="Controllers\DashboardController.cs" />
     <Compile Include="Controllers\GroupController.cs" />
     <Compile Include="Controllers\GroupNodeController.cs" />
-    <Compile Include="Controllers\NodeController.cs" />
     <Compile Include="Controllers\ProjectController.cs" />
     <Compile Include="Controllers\RecordingController.cs" />
     <Compile Include="Controllers\SessionController.cs" />

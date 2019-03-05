@@ -16,17 +16,8 @@ namespace UXR.ViewModels
 
         }
 
-        public ManageUserViewModel(ApplicationUser user, IdentityRole adminRole, IdentityRole approvedRole)
-        {
-            Username = user.UserName;
-            Id = user.Id;
-            IsAdmin = user.Roles.Any(r => r.RoleId == adminRole.Id);
-            Approved = user.Roles.Any(r => r.RoleId == approvedRole.Id);
-            IsConfirmed = user.EmailConfirmed;
-        }
-
         [Display(Name = "Username")]
-        public string Username { get; set; }
+        public string UserName { get; set; }
 
         public string Id { get; set; }
 
@@ -37,6 +28,6 @@ namespace UXR.ViewModels
         public bool IsConfirmed { get; set; }
 
         [Display(Name = "Approve")]
-        public bool Approved { get; set; }
+        public bool IsApproved { get; set; }
     }
 }
