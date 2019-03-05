@@ -164,7 +164,7 @@ namespace UXR.Controllers
 
             if (approval != null && approval.Succeeded)
             {
-                await _userManager.SendEmailAsync(user.Email, "Your account was approved", "");
+                await _userManager.SendEmailAsync(user.Id, "Your account was approved", "");
             }
             
         }
