@@ -2,22 +2,25 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
   <metadata>
     <id>UXR.Studies.Api.Client</id>
-    <version>0.5.0</version>
+    <version>1.0.0</version>
     <title>UXR.Studies.Api.Client</title>
-    <authors>UXI Dev</authors>
-    <owners>UXI FIIT STUBA</owners>
+    <authors>uxifiit</authors>
+    <owners>uxifiit</owners>
     <projectUrl>https://github.com/uxifiit/UXR</projectUrl>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <license type="file">LICENSE.txt</license>
+    <repository type="git" url="https://github.com/uxifiit/UXR" branch="$branch$" commit="$commit$" />
     <description>Client library for UXR, the UXI Group Studies management application.</description>
     <releaseNotes>Initial release.</releaseNotes>
-    <copyright>Copyright &#x00A9; 2018 UXI FIIT STUBA</copyright>
+    <copyright>Copyright &#x00A9; 2019 Faculty of Informatics and Information Technologies, Slovak University of Technology in Bratislava</copyright>
     <tags>UXR Studies API Client</tags>
     <dependencies>
       <dependency id="Microsoft.AspNet.WebApi.Client" version="5.2.3" />
-      <dependency id="UXI.Common.Web" version="2.1.2.0" />
+      <dependency id="UXI.Common.Web" version="3.0.0" />
     </dependencies>
   </metadata>
   <files>
-    <file src="..\src\UXR.Studies.Api.Client\bin\Release\UXR.Studies.Api.Client.dll" target="lib\net452" />
+    <file src="..\src\UXR.Studies.Api.Client\bin\$configuration$\UXR.Studies.Api.Client.dll" target="lib\net452" />
+    <file src="..\LICENSE.txt" target="" />
   </files>
 </package>

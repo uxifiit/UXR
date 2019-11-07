@@ -52,6 +52,10 @@
       <HintPath>..\..\packages\Bundler4Bower.1.0.0\lib\net451\B4BCore.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="DotNetZip, Version=1.13.3.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\DotNetZip.1.13.3\lib\net40\DotNetZip.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Elmah, Version=1.2.14706.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\elmah.corelibrary.1.2.2\lib\Elmah.dll</HintPath>
       <Private>True</Private>
@@ -66,10 +70,6 @@
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Ionic.Zip, Version=1.9.7.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\DotNetZip.1.9.7\lib\net20\Ionic.Zip.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
@@ -191,32 +191,32 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
-    <Reference Include="UXI.Common, Version=2.3.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\UXI.Common.2.3.0\lib\net45\UXI.Common.dll</HintPath>
+    <Reference Include="UXI.Common, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\UXI.Common.3.0.0\lib\net45\UXI.Common.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="UXI.Common.Web, Version=2.1.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\UXI.Common.Web.2.1.2\lib\net45\UXI.Common.Web.dll</HintPath>
+    <Reference Include="UXI.Common.Web, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\UXI.Common.Web.3.0.0\lib\net45\UXI.Common.Web.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="UXI.Common.WebApi, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\UXI.Common.WebApi.1.0.0\lib\net452\UXI.Common.WebApi.dll</HintPath>
+    <Reference Include="UXI.Common.WebApi, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\UXI.Common.WebApi.2.0.0\lib\net452\UXI.Common.WebApi.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="UXI.CQRS, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\UXI.CQRS.1.0.0\lib\net452\UXI.CQRS.dll</HintPath>
+    <Reference Include="UXI.CQRS, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\UXI.CQRS.2.0.0\lib\net452\UXI.CQRS.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="UXI.CQRS.EntityFramework, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\UXI.CQRS.EntityFramework.1.0.0\lib\net452\UXI.CQRS.EntityFramework.dll</HintPath>
+    <Reference Include="UXI.CQRS.EntityFramework, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\UXI.CQRS.EntityFramework.2.0.0\lib\net452\UXI.CQRS.EntityFramework.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="UXI.IO, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\UXI.IO.2.0.0\lib\net452\UXI.IO.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="UXI.ZIP, Version=2.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\UXI.ZIP.2.1.1\lib\net452\UXI.ZIP.dll</HintPath>
+    <Reference Include="UXI.ZIP, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\UXI.ZIP.3.0.0\lib\net452\UXI.ZIP.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="WebActivatorEx, Version=2.0.0.0, Culture=neutral, PublicKeyToken=7b26dc2a43f6a0d4, processorArchitecture=MSIL">

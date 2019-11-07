@@ -1,14 +1,13 @@
 # UXR
 
-###### The web application of the UXI Group Studies system.
+###### The web management application of the UXI Group Studies system.
 
 UXR is designed for administration of group studies recorded with the [UXC client application](https://github.com/uxifiit/UXC).
 UXC client and UXR web management applications form the UXI Group Studies infrastructure for conducting group eye tracking studies. 
 This project is developed at [User eXperience and Interaction Research Center](https://www.uxi.sk/) of [Slovak University of Technology in Bratislava](http://fiit.stuba.sk/)
 
-UXR is an ASP.NET MVC web application with two major components (areas):
+UXR is an ASP.NET MVC web application with one major component (area):
 * *Studies* - administration of group studies - manage projects, sessions, recordings. 
-* *Packages* - distribution of the UXC application updates (TBA).
 
 ## Main features
 
@@ -47,7 +46,7 @@ Use [Issues](issues) to request features, report bugs, or discuss ideas.
 * [Ninject](https://github.com/ninject/Ninject)
 * [AutoMapper](https://github.com/AutoMapper/AutoMapper)
 * Node.js
-* and others through NPM 
+* and other through NPM 
 
 ## How to build
 
@@ -93,27 +92,35 @@ $ grunt build
 * In Visual Studio:
     1. Right click on the **package.json** file and `Restore Packages`.
     2. Right click on the **bower.json** file and `Restore Packages`.
-    2. Open the **Task Runner Explorer** window in Visual Studio.
-    2. Run the **build** task (double-click or right click and Run).
-    3. Build task generates **css, js, fonts** folders. 
+    3. Open the **Task Runner Explorer** window in Visual Studio.
+    4. Run the **build** task (double-click or right click and Run).
+    5. Build task generates **css, js, fonts** folders. 
 
 
-## Authors
+## Contributors
 
 * Martin Konopka - [@martinkonopka](https://github.com/martinkonopka)
-* Peter Demcak  
+* Peter Demcak
+
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details
+This project is licensed under the 3-Clause BSD License - see [LICENSE.txt](LICENSE.txt) for details.
+
+Copyright (c) 2019 Faculty of Informatics and Information Technologies, Slovak University of Technology in Bratislava.
+
 
 ## Contacts
 
-* UXIsk 
-  * User eXperience and Interaction Research Center, Faculty of Informatics and Information Technologies, Slovak University of Technology in Bratislava
+* UXIsk
+  * User eXperience and Interaction Research Center
+  * Faculty of Informatics and Information Technologies, Slovak University of Technology in Bratislava
   * Web: https://www.uxi.sk/
 * Martin Konopka
   * E-mail: martin (underscore) konopka (at) stuba (dot) sk
 
 
+## Publications
 
+Bielikova, M., Konopka, M., Simko, J., Moro, R., Tvarozek, J., Hlavac, P., Kuric, E. (2018). Eye-tracking en masse: Group user studies,
+lab infrastructure, and practices. *Journal of Eye Movement Research, 11(3)*, Article No. 6. DOI: http://dx.doi.org/10.16910/jemr.11.3.6
