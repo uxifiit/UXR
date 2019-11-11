@@ -211,10 +211,6 @@
       <HintPath>..\..\packages\UXI.CQRS.EntityFramework.2.0.0\lib\net452\UXI.CQRS.EntityFramework.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="UXI.IO, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\UXI.IO.2.0.0\lib\net452\UXI.IO.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="UXI.ZIP, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\UXI.ZIP.3.0.0\lib\net452\UXI.ZIP.dll</HintPath>
       <Private>True</Private>
