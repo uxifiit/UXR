@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("UXR.Models")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("UXI@FIIT")]
 [assembly: AssemblyProduct("UXR.Models")]
-[assembly: AssemblyCopyright("Copyright ©  2016")]
+[assembly: AssemblyCopyright("Copyright (c) 2019 Faculty of Informatics and Information Technologies, Slovak University of Technology in Bratislava")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

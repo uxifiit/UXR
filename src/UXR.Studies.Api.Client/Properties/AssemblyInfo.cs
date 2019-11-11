@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("UXR.Studies.Api.Client")]
 [assembly: AssemblyDescription("Client library for UXR.Studies.Api")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("UXI FIIT STUBA")]
+[assembly: AssemblyCompany("UXI@FIIT")]
 [assembly: AssemblyProduct("UXR.Studies.Api.Client")]
-[assembly: AssemblyCopyright("Copyright © 2018 UXI FIIT STUBA")]
+[assembly: AssemblyCopyright("Copyright (c) 2019 Faculty of Informatics and Information Technologies, Slovak University of Technology in Bratislava")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
