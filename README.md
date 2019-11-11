@@ -100,8 +100,7 @@ $ grunt build
 
 
 
-## Installation
-
+## NuGet packages
 
 `UXR.Studies.Api.Client` library from this repository is available as a NuGet package in the public Azure DevOps artifacts repository for all UXIsk packages:
 
