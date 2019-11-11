@@ -97,6 +97,41 @@ $ grunt build
     5. Build task generates **css, js, fonts** folders. 
 
 
+
+## Installation
+
+`UXR.Studies.Api.Client` library from this repository is available as a NuGet package in the public Azure DevOps artifacts repository for all UXIsk packages:
+```
+https://pkgs.dev.azure.com/uxifiit/Packages/_packaging/Public/nuget/v3/index.json
+```
+
+### Add UXIsk Packages to package sources
+First, add a new package source. Choose the way that fits you the best:
+* Add new package source in [Visual Studio settings](https://docs.microsoft.com/en-us/azure/devops/artifacts/nuget/consume?view=azure-devops).
+* Add new package source from command line:
+```
+nuget source Add -Name "UXIsk Packages" -Source "https://pkgs.dev.azure.com/uxifiit/Packages/_packaging/Public/nuget/v3/index.json"
+```
+* Create or edit `NuGet.config` file in your project's solution directory where you specify this package source:
+```
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <packageSources>
+    <add key="UXIsk Packages" value="https://pkgs.dev.azure.com/uxifiit/Packages/_packaging/Public/nuget/v3/index.json" />
+    <!-- other package sources -->
+  </packageSources>
+  <disabledPackageSources />
+</configuration>
+```
+
+### Install packages
+
+Use the Visual Studio "Manage NuGet Packages..." window or the Package Manager Console:
+```
+PM> Install-Package <Library>
+```
+
+
 ## Contributors
 
 * Martin Konopka - [@martinkonopka](https://github.com/martinkonopka)

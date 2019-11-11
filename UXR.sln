@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.757
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UXR", "src\UXR\UXR.csproj", "{8D3A0FFB-37AF-460F-93FF-FF47D5BE6713}"
 EndProject
@@ -128,5 +128,8 @@ Global
 		{2340FAF0-81FD-4490-9C6A-4357FEBC8D43} = {6224CC0A-3DC2-44B5-A583-B2B9055522A7}
 		{DE59533D-F050-463C-A46A-469C575F60E2} = {6224CC0A-3DC2-44B5-A583-B2B9055522A7}
 		{457A7151-4629-4829-B5B4-85F207191F6C} = {6224CC0A-3DC2-44B5-A583-B2B9055522A7}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {07857CAE-0FF5-4023-A38E-946AF6A71D3E}
 	EndGlobalSection
 EndGlobal
