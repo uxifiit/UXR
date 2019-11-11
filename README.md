@@ -1,5 +1,7 @@
 # UXR
 
+[![Build Status](https://dev.azure.com/uxifiit/UXR/_apis/build/status/uxifiit.UXR?branchName=master)](https://dev.azure.com/uxifiit/UXR/_build/latest?definitionId=9&branchName=master) [![UXR.Studies.Api.Client package in Public feed in Azure Artifacts](https://feeds.dev.azure.com/uxifiit/905a1e2c-1aff-45b3-bc72-dba43be0a133/_apis/public/Packaging/Feeds/990007cf-a847-406c-9fa5-dec22ee2ccdc/Packages/675fe609-a60a-41bf-bc50-7dfd3eba6e5a/Badge)](https://dev.azure.com/uxifiit/Packages/_packaging?_a=package&feed=990007cf-a847-406c-9fa5-dec22ee2ccdc&package=675fe609-a60a-41bf-bc50-7dfd3eba6e5a&preferRelease=true)
+
 ###### The web management application of the UXI Group Studies system.
 
 UXR is designed for administration of group studies recorded with the [UXC client application](https://github.com/uxifiit/UXC).
@@ -100,7 +102,9 @@ $ grunt build
 
 ## Installation
 
+
 `UXR.Studies.Api.Client` library from this repository is available as a NuGet package in the public Azure DevOps artifacts repository for all UXIsk packages:
+
 ```
 https://pkgs.dev.azure.com/uxifiit/Packages/_packaging/Public/nuget/v3/index.json
 ```
@@ -128,7 +132,7 @@ nuget source Add -Name "UXIsk Packages" -Source "https://pkgs.dev.azure.com/uxif
 
 Use the Visual Studio "Manage NuGet Packages..." window or the Package Manager Console:
 ```
-PM> Install-Package <Library>
+PM> Install-Package UXR.Studies.Api.Client
 ```
 
 
