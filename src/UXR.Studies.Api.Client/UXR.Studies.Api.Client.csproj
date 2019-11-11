@@ -57,12 +57,12 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="UXI.Common, Version=2.3.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\UXI.Common.2.3.0\lib\net45\UXI.Common.dll</HintPath>
+    <Reference Include="UXI.Common, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\UXI.Common.3.0.0\lib\net45\UXI.Common.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="UXI.Common.Web, Version=2.1.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\UXI.Common.Web.2.1.2\lib\net45\UXI.Common.Web.dll</HintPath>
+    <Reference Include="UXI.Common.Web, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\UXI.Common.Web.3.0.0\lib\net45\UXI.Common.Web.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>

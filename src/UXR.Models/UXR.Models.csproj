@@ -64,12 +64,12 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="UXI.CQRS, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\UXI.CQRS.1.0.0\lib\net452\UXI.CQRS.dll</HintPath>
+    <Reference Include="UXI.CQRS, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\UXI.CQRS.2.0.0\lib\net452\UXI.CQRS.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="UXI.CQRS.EntityFramework, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\UXI.CQRS.EntityFramework.1.0.0\lib\net452\UXI.CQRS.EntityFramework.dll</HintPath>
+    <Reference Include="UXI.CQRS.EntityFramework, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\UXI.CQRS.EntityFramework.2.0.0\lib\net452\UXI.CQRS.EntityFramework.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
