@@ -50,6 +50,8 @@ namespace UXR.Studies.Files
         {
             using (var zipStream = new ZipOutputStream(stream))
             {
+                zipStream.EnableZip64 = Zip64Option.Always;
+
                 foreach (var recording in recordings)
                 {
                     string entryPath = filePathFormat.Replace("{project}", recording.ProjectName)
